@@ -252,7 +252,7 @@ def _TimeToPositiveFrequencies(N, dt) :
     df = 1.0 / (N*dt)
     return np.arange(n) * df
 
-def Overlap(W1, W2, PSD) :
+def Match(W1, W2, PSD, Frequencies=None) :
     """
     Return overlap as function of time offset between two Waveforms.
     
@@ -274,7 +274,7 @@ def Overlap(W1, W2, PSD) :
         t = np.linspace(t0, t1, int((t1-t0)/dt)+1) # Make sure that t0 and t1 are included
         a.Interpolate(t)
         b.Interpolate(t)
-    if( (not hasattr(PSD, '__call__')) and (not ( hasattr(PSD, '__getitem__') and len(PSD)==a.N )) ) :
+    if( (not Frequencies==None) and (not hasattr(PSD, '__call__')) and (not ( hasattr(PSD, '__getitem__') and len(PSD)==a.N )) ) :
         ErrorString = \
         """
         The PSD you gave me is not usable.  It needs to be 
@@ -286,7 +286,17 @@ def Overlap(W1, W2, PSD) :
     N = a.N
     dt = a.dt
     df = 1.0/(N*dt)
-    if(hasattr(PSD, '__call__')) :
+    if( (not Frequencies==None) ) :
+        import numpy as np
+        import scipy.interpolate as spi
+        if(Frequencies[-1]<Frequencies[0]) :
+            Frequencies = np.concatenate((Frequencies[len(Frequencies)/2+1:], Frequencies[:len(Frequencies)/2+1]))
+            PSD = np.concatenate((PSD[len(PSD)/2+1:], PSD[:len(PSD)/2+1]))
+        SmoothedPSD = SmoothData.SavitzkyGolay(PSD, 4001, 2)
+        PSD = spi.UnivariateSpline(Frequencies, SmoothedPSD, s=0)
+        f = _TimeToPositiveFrequencies(N, dt)
+        psd = PSD(f)
+    elif(hasattr(PSD, '__call__')) :
         f = _TimeToPositiveFrequencies(N, dt)
         psd = PSD(f)
     else :
@@ -295,11 +305,12 @@ def Overlap(W1, W2, PSD) :
     b = dt*np.fft.rfft(b.data)
     a /= dt * np.sqrt(_InnerProduct(a, a, psd, df))
     b /= dt * np.sqrt(_InnerProduct(b, b, psd, df))
-    return [2*dt*abs(np.fft.irfft( a * np.conj(b) / psd )), dt, N]
+    # return [2*dt*abs(np.fft.irfft( a * np.conj(b) / psd )), dt, N]
+    return 2*dt*abs(np.fft.irfft( a * np.conj(b) / psd ))
 
-def Match(W1, W2, PSD) :
-    """
-    Return maximum overlap between the two Waveforms.
-    """
-    return max(Overlap(W1, W2, PSD))
+# def Match(W1, W2, PSD) :
+#     """
+#     Return maximum overlap between the two Waveforms.
+#     """
+#     return max(Overlap(W1, W2, PSD))
 
