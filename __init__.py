@@ -184,13 +184,14 @@ class Waveform :
     
 
 
-def RecordWaveform(RecordingTime = 5.0, SamplingFrequency = 44100) :
+def RecordWaveform(RecordingTime=5.0, SamplingFrequency=48000, Normalized=True) :
     """
     Record audio from the computer's microphone.
     
     A Waveform object is returned, containing the recorded data.  The
     optional arguments are the number of seconds for which to record,
-    and the sampling frequency (in Hertz).
+    the sampling frequency (in Hertz), and whether or not the maximum
+    absolute value in the data is 1.
     """
     import pyaudio
     import wave
@@ -230,6 +231,8 @@ def RecordWaveform(RecordingTime = 5.0, SamplingFrequency = 44100) :
     W.N = len(data)/struct.calcsize('1i')
     fmt = fmt % W.N
     W.data = (np.array(struct.unpack(fmt, data), dtype=float)-offset) / scale
+    if(Normalized) :
+        W.data = W.data / max(abs(W.data))
     return W
 
 
@@ -254,26 +257,29 @@ def _TimeToPositiveFrequencies(N, dt) :
 
 def Match(W1, W2, PSD, Frequencies=None) :
     """
-    Return overlap as function of time offset between two Waveforms.
+    Return match as function of time offset between two Waveforms.
     
     
     """
     if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform))) :
         ErrorString = \
-        """You gave me "{0}" and "{1}" objects.  I need "Waveform"
-        objects.  Try again.""".format(W1.__class__.__name__, W2.__class__.__name__)
+        """You gave me "{0}", "{1}", and "{2}" objects.  I need "Waveform"
+        objects.  Try again.""".format(W1.__class__.__name__, W2.__class__.__name__, W3.__class__.__name__)
         raise TypeError(ErrorString)
     a = W1
     b = W2
-    if((not a.N==b.N) or (not a.dt==b.dt)) :
+    c = PSD
+    if((not a.N==b.N) or (not a.dt==b.dt) or (not a.N==c.N) or (not a.dt==c.dt)) :
         a = Waveform(W1)
         b = Waveform(W2)
-        t0 = min(a.t0, b.t0)
-        t1 = max(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt)
-        dt = min(a.dt, b.dt)
+        c = Waveform(PSD)
+        t0 = min(a.t0, b.t0, c.t0)
+        t1 = max(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt, c.t0+(c.N-1)*c.dt)
+        dt = min(a.dt, b.dt, c.dt)
         t = np.linspace(t0, t1, int((t1-t0)/dt)+1) # Make sure that t0 and t1 are included
         a.Interpolate(t)
         b.Interpolate(t)
+        c.Interpolate(t)
     if( (not Frequencies==None) and (not hasattr(PSD, '__call__')) and (not ( hasattr(PSD, '__getitem__') and len(PSD)==a.N )) ) :
         ErrorString = \
         """
