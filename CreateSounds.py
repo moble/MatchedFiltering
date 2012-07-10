@@ -7,8 +7,9 @@ import MatchedFiltering
 
 Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
+#dt = 1.0/45000.0
 
-CutoffFrequency = 10 # Hz
+CutoffFrequency = 10.0 # Hz
 
 for File in ["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_EqualMassNonspinning_L2_M2.dat"] :
     print("Working on {}...  ".format(File))
@@ -17,7 +18,7 @@ for File in ["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_EqualMassNonspi
     Arg = spi.interp1d(Data[:,0], Data[:,2], bounds_error=False, fill_value=0.0)
     MaxMagIndex = np.argmax(Data[:,1])
     InitialFrequency = -(np.diff(Data[0:2,2])/(2*np.pi*Msun*np.diff(Data[0:2,0])))[0]
-    for M in [05, 06, 10, 20, 40, 80, 160, 320] :
+    for M in [5, 6, 10, 20, 40, 80, 160, 320] :
         print("\tM={0}MSun...".format(M))
         initialFrequency = InitialFrequency/float(M)
         if(initialFrequency<CutoffFrequency) :
