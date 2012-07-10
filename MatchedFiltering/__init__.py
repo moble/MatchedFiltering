@@ -14,7 +14,7 @@ class Waveform :
     or by recording through the computer's speakers.  For example:
     >>> import MatchedFiltering
     >>> W1 = MatchedFiltering.Waveform('test.wav')
-    >>> W2 = MatchedFiltering.RecordWaveform(10) 
+    >>> W2 = MatchedFiltering.RecordWaveform(10)
     
     Waveforms can also be added to each other and multiplied by a
     number to make them louder or quieter.
@@ -287,11 +287,13 @@ def Match(W1, W2, Noise) :
     import scipy.interpolate as spi
     import numpy.fft as npfft
     Frequencies = npfft.fftfreq(Noise.N, Noise.dt)
-    Frequencies = np.concatenate((Frequencies[len(Frequencies)/2+1:], Frequencies[:len(Frequencies)/2+1]))
+    Frequencies = np.concatenate((Frequencies[len(Frequencies)/2:], Frequencies[:len(Frequencies)/2]))
     PSD = Noise.dt * npfft.fft(Noise.data)
     PSD = abs(PSD)**2
-    PSD = np.concatenate((PSD[len(PSD)/2+1:], PSD[:len(PSD)/2+1]))
-    SmoothedPSD = SmoothData.SavitzkyGolay(PSD, 4001, 2)
+    PSD = np.concatenate((PSD[len(PSD)/2:], PSD[:len(PSD)/2]))
+    PSD = PSD + PSD[::-1] # Make sure it's symmetric
+    SmoothedPSD = SmoothData.SavitzkyGolay(PSD, 101, 2)
+    # SmoothedPSD = SmoothData.SavitzkyGolay(PSD, 3, 0)
     PSD = spi.UnivariateSpline(Frequencies, SmoothedPSD, s=0)
     f = _TimeToPositiveFrequencies(N, dt)
     psd = PSD(f)
