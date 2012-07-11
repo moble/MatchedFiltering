@@ -99,8 +99,8 @@ class Waveform :
         shorter Waveform is assumed to just be 0 when it does not
         exist.  Also, the Waveforms may have different time steps
         'dt', in which case the returned Waveform has the finer time
-        step.  However, interpolation is done in this case, which
-        might cause subtle problems.
+        step.  However, naive interpolation is done in this case
+        (rather than upsampling), which might cause subtle problems.
         """
         a = Waveform(self)
         b = Waveform(other)
