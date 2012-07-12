@@ -102,6 +102,10 @@ class Waveform :
         step.  However, naive interpolation is done in this case
         (rather than upsampling), which might cause subtle problems.
         """
+        if( (a.t0==b.t0) and (a.N==b.N) and (a.dt==b.dt) ) :
+            a = Waveform(self)
+            a.data += other.data
+            return a
         a = Waveform(self)
         b = Waveform(other)
         t0 = min(a.t0, b.t0)
@@ -264,7 +268,8 @@ def Match(W1, W2, Noise) :
     if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform))) :
         ErrorString = \
         """You gave me "{0}", "{1}", and "{2}" objects.  I need "Waveform"
-        objects.  Try again.""".format(W1.__class__.__name__, W2.__class__.__name__, W3.__class__.__name__)
+        objects.  Try again.""".format(W1.__class__.__name__, W2.__class__.__name__,
+                                       Noise.__class__.__name__)
         raise TypeError(ErrorString)
     a = W1
     b = W2
@@ -274,9 +279,13 @@ def Match(W1, W2, Noise) :
         b = Waveform(W2)
         c = Waveform(Noise)
         t0 = min(a.t0, b.t0, c.t0)
+        #print(a.t0, b.t0, c.t0, t0)
         t1 = max(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt, c.t0+(c.N-1)*c.dt)
+        #print(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt, c.t0+(c.N-1)*c.dt, t1)
         dt = min(a.dt, b.dt, c.dt)
+        #print(a.dt, b.dt, c.dt, dt)
         t = np.linspace(t0, t1, int((t1-t0)/dt)+1) # Make sure that t0 and t1 are included
+        #print(len(t))
         a.Interpolate(t)
         b.Interpolate(t)
         c.Interpolate(t)
@@ -288,7 +297,8 @@ def Match(W1, W2, Noise) :
     import numpy.fft as npfft
     Frequencies = npfft.fftfreq(Noise.N, Noise.dt)
     Frequencies = np.concatenate((Frequencies[len(Frequencies)/2:], Frequencies[:len(Frequencies)/2]))
-    PSD = Noise.dt * npfft.fft(Noise.data)
+    # PSD = Noise.dt * npfft.fft(Noise.data)
+    PSD = npfft.fft(Noise.data) / Noise.N
     PSD = abs(PSD)**2
     PSD = np.concatenate((PSD[len(PSD)/2:], PSD[:len(PSD)/2]))
     PSD = PSD + PSD[::-1] # Make sure it's symmetric
