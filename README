@@ -1,0 +1,35 @@
+This package is a python module together with a couple of ipython
+notebooks, for demonstrating matched filtering -- the basic
+data-analysis method used by LIGO (among others).  There is a lot of
+explanation and sample code in the main notebook, which is
+`MatchedFilteringDemonstration.ipynb`.
+
+To run the code
+===============
+If you are reading this README from the github project page, you
+should first download the package to your own computer with something
+like
+    git clone --depth 1 https://github.com/MOBle/MatchedFiltering.git
+Otherwise, you are presumably reading this in the code itself.
+
+You will need a reasonably current installation of python, along with
+[ipython-notebook][1] and [pylab][2].  For full functionality, you
+will also need the [pyaudio module][3].
+
+First, go into the top directory of the code: `MatchedFiltering`.  In
+it, there should be an executable file called `CreateSounds.py` which
+will create a set of WAV files from real gravitational-waveform data.
+These files will be needed later.
+
+Now, from that same directory, issue the command
+    ipython notebook --pylab
+This will start an ipython session, but should switch to your default
+web browser, where you will interact with the session.  Next, click on
+the file `MatchedFilteringDemonstration.ipynb`, and follow the 
+instructions in there.
+
+
+
+[1]: http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html
+[2]: http://www.scipy.org/PyLab
+[3]: http://people.csail.mit.edu/hubert/pyaudio/
