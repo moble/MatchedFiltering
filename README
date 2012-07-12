@@ -2,18 +2,18 @@ This package is designed to be a simple demonstration of the
 principles of matched filtering.  It uses the analogy of LIGO as a
 microphone to explain the basic ideas, using a microphone attached to
 the computer to study data as a function of time, noise sources, and
-real signals.  Examples are given where a signal is buried in the
-noise and extracted using matched filtering.  Real LIGO data and
+real signals, as well as headphones or a speaker to play back those
+signals and others.  Examples are given where a signal is buried in
+the noise and extracted using matched filtering.  Real LIGO data and
 accurate gravitational waveforms are also included with this code, and
 used for further examples to complete the analogy.
 
 Fourier transforms are introduced, starting with a simple example of a
 pure tone (which can be played by the computer), and progressing to
-Fourier transforms of noise and gravitational-wave signals.  (A second
-notebook is also included for further exploration of the Fourier
-transform.)  The matched filter is then introduced by progressively
-building the formula with simple explanations for each term.  These
-concepts are interwoven with practice using them.
+Fourier transforms of noise and gravitational-wave signals.  The
+matched filter is then introduced by progressively building the
+formula with simple explanations for each term.  These concepts are
+interwoven with practice using them.
 
 The material is presented as an ipython notebook -- which looks and
 acts basically like Mathematica.  The notebook includes text
@@ -22,6 +22,14 @@ included (with latex equations) right among the code, and all in a
 live python session.  No familiarity with python is necessary for the
 student, though the computer will need to be set up by someone with
 good technical skills.
+
+A second notebook is also included for more demonstrations of the
+Fourier transform.  This notebook makes it easy to record a sound --
+tuning forks, musical instruments, or whatever the student is curious
+about -- and look at its Fourier transform.  This encourages to the
+student to play with the ideas a little, experimenting to gain
+understanding.
+
 
 
 To run the code
@@ -48,6 +56,7 @@ This will start an ipython session, but should switch to your default
 web browser, where you will interact with the session.  Next, click on
 the file `MatchedFilteringDemonstration.ipynb`, and follow the 
 instructions in there.
+
 
 
 Notes for classroom use
