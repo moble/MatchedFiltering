@@ -49,13 +49,15 @@ it, there should be an executable file called `CreateSounds.py` which
 will create a set of WAV files from real gravitational-waveform data.
 These files will be needed later.  To create them, run
     python CreateSounds.py
+This will run through a set of waveforms it creates.
 
 Now, from that same directory, issue the command
     ipython notebook --pylab
 This will start an ipython session, but should switch to your default
 web browser, where you will interact with the session.  Next, click on
-the file `MatchedFilteringDemonstration.ipynb`, and follow the 
-instructions in there.
+the file `MatchedFilteringDemonstration.ipynb`, and follow the
+instructions in there.  You may need to change the path in the first
+cell to the one you actually used.
 
 
 
