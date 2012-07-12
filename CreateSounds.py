@@ -8,6 +8,7 @@ import MatchedFiltering
 Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
 #dt = 1.0/45000.0
+#dt = 6.103515625e-05
 
 CutoffFrequency = 5.0 # Hz
 

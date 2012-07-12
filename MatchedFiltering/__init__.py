@@ -102,7 +102,7 @@ class Waveform :
         step.  However, naive interpolation is done in this case
         (rather than upsampling), which might cause subtle problems.
         """
-        if( (a.t0==b.t0) and (a.N==b.N) and (a.dt==b.dt) ) :
+        if( (self.t0==other.t0) and (self.N==other.N) and (self.dt==other.dt) ) :
             a = Waveform(self)
             a.data += other.data
             return a
