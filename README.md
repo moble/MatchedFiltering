@@ -39,7 +39,9 @@ To run the code
 If you are reading this README from the github project page, you
 should first download the package to your own computer with something
 like
-    git clone --depth 1 https://github.com/MOBle/MatchedFiltering.git
+```bash
+git clone --depth 1 https://github.com/MOBle/MatchedFiltering.git
+```
 Otherwise, you are presumably reading this in the code itself.
 
 You will need a reasonably current installation of python, along with
@@ -92,17 +94,17 @@ directories), or ipython will get screwed up and run into errors.
 
 The steps to set up the computer are
 
-0) install all necessary packages
-1) get the audio (input and output) working
-2) open a terminal
-3) `git clone` the repository onto each computer
-4) cd into `MatchedFiltering`
-5) run `CreateSounds.py`
-6) start the ipython session
-7) select the demonstration notebook
+0. install all necessary packages
+1. get the audio (input and output) working
+2. open a terminal
+3. `git clone` the repository onto each computer
+4. cd into `MatchedFiltering`
+5. run `CreateSounds.py`
+6. start the ipython session
+7. select the demonstration notebook
 
-Steps (0) and (1) in particular are absolutely crucial, and is
-sufficiently complicate that these should probably be done well in
+Steps (0) and (1) in particular are absolutely crucial, and are
+sufficiently complicated that these should probably be done well in
 advance.  Depending on the computer skills of the students, and their
 familiarity with your particular computers, they may be able to help
 with steps (2) through (7).
