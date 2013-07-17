@@ -3,7 +3,7 @@
 import sys
 import numpy as np
 import scipy.interpolate as spi
-import MatchedFiltering
+import pyMatchedFiltering as MatchedFiltering
 
 Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
@@ -19,7 +19,7 @@ for File in ["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_EqualMassNonspi
     Arg = spi.interp1d(Data[:,0], Data[:,2], bounds_error=False, fill_value=0.0)
     MaxMagIndex = np.argmax(Data[:,1])
     InitialFrequency = -(np.diff(Data[0:2,2])/(2*np.pi*Msun*np.diff(Data[0:2,0])))[0]
-    for M in [5, 6, 10, 20, 40, 80, 160, 320] :
+    for M in [5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320] :
         print("\tM={0}MSun...".format(M))
         initialFrequency = InitialFrequency/float(M)
         if(initialFrequency<CutoffFrequency) :
