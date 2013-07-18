@@ -41,7 +41,7 @@ for i,File in enumerate(["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_Equ
     MaxMagIndex[i] = np.argmax(Data[i][:,1])
     InitialFrequency[i] = -(np.diff(Data[i][0:2,2])/(2*np.pi*Msun*np.diff(Data[i][0:2,0])))[0]
 
-for i in range(1, 5) :
+for i in range(1, 23) :
     # Randomly select some parameters
     M = 310.0*random() + 10.0
     S = randomint(2)
