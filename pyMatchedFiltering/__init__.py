@@ -279,6 +279,9 @@ def Match(W1, W2, Noise) :
     
     
     """
+    import numpy as np
+    import scipy.interpolate as spi
+    import numpy.fft as npfft
     if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform))) :
         ErrorString = \
         """You gave me "{0}", "{1}", and "{2}" objects.  I need "Waveform"
@@ -306,9 +309,6 @@ def Match(W1, W2, Noise) :
     N = a.N
     dt = a.dt
     df = 1.0/(N*dt)
-    import numpy as np
-    import scipy.interpolate as spi
-    import numpy.fft as npfft
     Frequencies = npfft.fftfreq(Noise.N, Noise.dt)
     Frequencies = np.concatenate((Frequencies[len(Frequencies)/2:], Frequencies[:len(Frequencies)/2]))
     # PSD = Noise.dt * npfft.fft(Noise.data)
@@ -333,3 +333,48 @@ def Match(W1, W2, Noise) :
 #     Return maximum overlap between the two Waveforms.
 #     """
 #     return max(Overlap(W1, W2, PSD))
+
+
+def SimplifyNoisyData(x, y, n=10000) :
+    """
+    Reduce number of points in (x,y) by splitting into bins and finding max and min of each.
+    
+    Without some simplification, matplotlib fails when asked to plot
+    large data sets.  But if we just plot every tenth point (say) of
+    noisy data, the peaks look different.  It would be better to go
+    through the data to find the max and min values in every ten
+    points, and then plot those.  That is the basic idea behind this
+    function.
+    
+    Note that `n` is the number of bins for the max and for the min; the returned data has 2*n data points in X and Y.
+    
+    Based on <http://stackoverflow.com/a/8881973/1194883>
+    
+    """
+    
+    if(y.size%(2*n)==0) :
+        N = n
+    else :
+        N = n-1
+    
+    # Divide into chunks
+    ychunksize = y.size // N
+    ychunks = y[:ychunksize*N].reshape((-1, ychunksize))
+    xchunksize = y.size // (2*N)
+    xchunks = x[:xchunksize*2*N].reshape((-1, xchunksize))
+    
+    # Calculate the max and min of chunksize-element chunks...
+    max_env = ychunks.max(axis=1)
+    min_env = ychunks.min(axis=1)
+    X = xchunks.mean(axis=1)
+    
+    # If necessary, include the missing end
+    if(n!=N) :
+        max_env = np.append(max_env, np.max(y[ychunksize*N:]))
+        min_env = np.append(min_env, np.min(y[ychunksize*N:]))
+        X = np.append(X, [(X[-1]+x[1])/2., x[-1]])
+        
+    # Interleave the max and min to form Y
+    Y = np.ravel([max_env, min_env], order='F')
+    
+    return X,Y
