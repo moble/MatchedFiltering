@@ -56,7 +56,7 @@ class Waveform :
         return np.linspace(self.t0, self.t0+(self.N-1)*self.dt, self.N, endpoint=True)
     
     def PadWithZeroToSameLengthAs(self, other) :
-        self.data = np.append(self.data, [0.0]*(self.other-self.N))
+        self.data = np.append(self.data, [0.0]*(other.N-self.N))
         self.N = other.N
         return self
     
@@ -372,7 +372,7 @@ def SimplifyNoisyData(x, y, n=10000) :
     if(n!=N) :
         max_env = np.append(max_env, np.max(y[ychunksize*N:]))
         min_env = np.append(min_env, np.min(y[ychunksize*N:]))
-        X = np.append(X, [(X[-1]+x[1])/2., x[-1]])
+        X = np.append(X, [(X[-1]+x[-1])/2., x[-1]])
         
     # Interleave the max and min to form Y
     Y = np.ravel([max_env, min_env], order='F')

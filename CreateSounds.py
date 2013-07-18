@@ -9,6 +9,7 @@ Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
 #dt = 1.0/45000.0
 #dt = 6.103515625e-05
+N = int(20.0/dt)
 
 CutoffFrequency = 5.0 # Hz
 
@@ -21,16 +22,20 @@ for File in ["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_EqualMassNonspi
     InitialFrequency = -(np.diff(Data[0:2,2])/(2*np.pi*Msun*np.diff(Data[0:2,0])))[0]
     for M in [5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320] :
         print("\tM={0}MSun...".format(M))
-        initialFrequency = InitialFrequency/float(M)
-        if(initialFrequency<CutoffFrequency) :
-            print("\t\tinitialFrequency={}<20Hz.  Finding appropriate initial time...".format(initialFrequency))
-            TofF = spi.interp1d(-np.diff(Data[:MaxMagIndex,2])/(2*np.pi*M*Msun*np.diff(Data[:MaxMagIndex,0])),
-                                M*Msun*Data[1:MaxMagIndex,0])
-            t0 = TofF(20)
-        else :
-            t0 = Data[0,0]*M*Msun
+        # initialFrequency = InitialFrequency/float(M)
+        # if(initialFrequency<CutoffFrequency) :
+        #     print("\t\tinitialFrequency={}<20Hz.  Finding appropriate initial time...".format(initialFrequency))
+        #     TofF = spi.interp1d(-np.diff(Data[:MaxMagIndex,2])/(2*np.pi*M*Msun*np.diff(Data[:MaxMagIndex,0])),
+        #                         M*Msun*Data[1:MaxMagIndex,0])
+        #     t0 = TofF(20)
+        # else :
+        #     t0 = Data[0,0]*M*Msun
+        # t1 = Data[-1,0]*M*Msun
+        # tOverM = np.arange(t0/(M*Msun), t1/(M*Msun) + 0.05*(t1-t0)/(M*Msun), dt/(M*Msun))
         t1 = Data[-1,0]*M*Msun
-        tOverM = np.arange(t0/(M*Msun), t1/(M*Msun) + 0.05*(t1-t0)/(M*Msun), dt/(M*Msun))
+        tOverM = np.arange((t1-20)/(M*Msun), t1/(M*Msun) + 0.5/(M*Msun), dt/(M*Msun))
+        if(len(tOverM)>N) :
+            tOverM = tOverM[len(tOverM)-N:]
         W = MatchedFiltering.Waveform()
         W.dt = dt
         W.N = len(tOverM)
