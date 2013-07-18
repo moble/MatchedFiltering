@@ -9,7 +9,12 @@ Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
 #dt = 1.0/45000.0
 #dt = 6.103515625e-05
-N = int(20.0/dt)
+t_tot = 20.0
+t_pad = 0.5
+# t_window = 0.5
+# N_window = int(t_window/dt)
+# window = np.blackman(N_window)
+N = int(t_tot/dt)
 
 CutoffFrequency = 5.0 # Hz
 
@@ -33,13 +38,14 @@ for File in ["rhOverM_EqualMassAlignedSpins_L2_M2.dat", "rhOverM_EqualMassNonspi
         # t1 = Data[-1,0]*M*Msun
         # tOverM = np.arange(t0/(M*Msun), t1/(M*Msun) + 0.05*(t1-t0)/(M*Msun), dt/(M*Msun))
         t1 = Data[-1,0]*M*Msun
-        tOverM = np.arange((t1-20)/(M*Msun), t1/(M*Msun) + 0.5/(M*Msun), dt/(M*Msun))
+        tOverM = np.arange((t1-t_tot)/(M*Msun), t1/(M*Msun) + t_pad/(M*Msun), dt/(M*Msun))
         if(len(tOverM)>N) :
             tOverM = tOverM[len(tOverM)-N:]
         W = MatchedFiltering.Waveform()
         W.dt = dt
         W.N = len(tOverM)
         W.data = Mag(tOverM)*np.sin(Arg(tOverM)-Arg(tOverM[0]))
+        # W.data[:N_window/2] = W.data[:N_window/2]*window[:N_window/2]
         W.WriteWAVFile('Sounds/'+File.replace("rhOverM_","").replace("L2_M2.dat","")+'Re_M{0:03d}.wav'.format(M))
     print("")
 print("Finished")

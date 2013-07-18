@@ -13,6 +13,11 @@ Msun = 4.92579497e-6 # seconds
 dt = 1.0/44100.0
 #dt = 1.0/45000.0
 #dt = 6.103515625e-05
+t_tot = 20.0
+t_pad = 0.5
+# t_window = 0.5
+# N_window = int(t_window/dt)
+# window = np.blackman(N_window)
 
 # Now read in the LIGO noise data and adjust to suit this waveform
 LIGONoise = MatchedFiltering.Waveform('Sounds/LIGONoise.wav')
@@ -43,13 +48,14 @@ for i in range(1, 5) :
     # Create the waveform appropriately
     # t0 = Data[S][0,0]*M*Msun
     t1 = Data[S][-1,0]*M*Msun
-    tOverM = np.arange((t1-20)/(M*Msun), t1/(M*Msun) + 0.5/(M*Msun), dt/(M*Msun))
+    tOverM = np.arange((t1-t_tot)/(M*Msun), t1/(M*Msun) + t_pad/(M*Msun), dt/(M*Msun))
     if(len(tOverM)>LIGONoise.N) :
         tOverM = tOverM[len(tOverM)-LIGONoise.N-1:]
     W = MatchedFiltering.Waveform()
     W.dt = dt
     W.N = len(tOverM)
     W.data = Mag[S](tOverM)*np.sin(Arg[S](tOverM)-Arg[S](tOverM[0]))
+    # W.data[:N_window/2] = W.data[:N_window/2]*window[:N_window/2]
     if(W.N>LIGONoise.N) :
         W.data = W.data[W.N-LIGONoise.N:]
         W.N = LIGONoise.N
@@ -59,7 +65,7 @@ for i in range(1, 5) :
     Offset = randomint(W.N)
     W.data = np.roll(W.data, Offset)
     # Combine the signals
-    SignalToNoiseRatio = 2.e-2 # Use a large number because the templates will be widely separated
+    SignalToNoiseRatio = 1.e-2 # Use a large number because the templates will be widely separated
     FakeLIGOData = (1.0-SignalToNoiseRatio)*LIGONoise + SignalToNoiseRatio*W
     # Write the fake LIGO data to file
     FakeLIGOData.WriteWAVFile('SearchData/nws{0:02d}.wav'.format(i))
