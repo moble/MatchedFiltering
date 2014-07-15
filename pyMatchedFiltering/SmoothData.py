@@ -3,34 +3,34 @@ import numpy as np
 def Smooth(x,window_len=11,window='hanning'):
     """
     Smooth the data using a window with requested size.
-    
+
     CREDIT: http://www.scipy.org/Cookbook/SignalSmooth
-    
+
     This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal 
+    The signal is prepared by introducing reflected copies of the signal
     (with the window size) in both ends so that transient parts are minimized
     in the begining and end part of the output signal.
-    
+
     input:
-        x: the input signal 
+        x: the input signal
         window_len: the dimension of the smoothing window; should be an odd integer
         window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
 
     output:
         the smoothed signal
-        
+
     example:
 
     t=linspace(-2,2,0.1)
     x=sin(t)+randn(len(t))*0.1
     y=smooth(x)
-    
-    see also: 
-    
+
+    see also:
+
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
- 
+
     TODO: the window parameter could be the window itself if an array instead of a string
     NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
@@ -56,7 +56,7 @@ def Smooth(x,window_len=11,window='hanning'):
         w=np.ones(window_len,'d')
     else:
         w=eval('np.'+window+'(window_len)')
-    
+
     y=np.convolve(w/w.sum(),s,mode='valid')
     return y
 
@@ -64,9 +64,9 @@ def Smooth(x,window_len=11,window='hanning'):
 def SavitzkyGolay(y, window_size, order, deriv=0):
     r"""
     Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
-    
+
     CREDIT: http://www.scipy.org/Cookbook/SavitzkyGolay
-    
+
     The Savitzky-Golay filter removes high frequency noise from data.
     It has the advantage of preserving the original shape and
     features of the signal better than other types of filtering

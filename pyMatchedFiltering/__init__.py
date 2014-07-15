@@ -1,25 +1,31 @@
+import sys, os
 import numpy as np
 import scipy as sp
 import SmoothData
+import pyaudio
+
+sys.path.append(os.path.dirname(__file__))
+
+DefaultSamplingFrequency = int(pyaudio.PyAudio().get_device_info_by_index(0)['defaultSampleRate'])
 
 class Waveform :
     """
     Container for time-domain data.
-    
+
     An object of class Waveform contains an initial time 't0', a
     time-step size 'dt', the total number of time steps 'N', and
     real-valued data for each of those time steps 'data'.
-    
+
     You can initialize a Waveform by giving the name of some WAV file
     or by recording through the computer's speakers.  For example:
     >>> import MatchedFiltering
     >>> W1 = MatchedFiltering.Waveform('test.wav')
     >>> W2 = MatchedFiltering.RecordWaveform(10)
-    
+
     Waveforms can also be added to each other and multiplied by a
     number to make them louder or quieter.
     """
-    
+
     def __init__(self, *args) :
         if(len(args) == 0) :
             self.t0 = 0.0
@@ -33,40 +39,37 @@ class Waveform :
                 self.N = args[0].N
                 self.data = np.array(args[0].data)
             else : # Otherwise, assume it's a file and try to read it
-                try :
-                    import ReadWAVFile
-                    self.data, SampleRate, self.N = ReadWAVFile.ReadWAVFile(args[0])
-                    self.dt = 1.0/float(SampleRate)
-                    self.t0 = 0.0
-                except :
-                    raise TypeError('Unrecognized argument to Waveform constructor')
+                import ReadWAVFile
+                self.data, SampleRate, self.N = ReadWAVFile.ReadWAVFile(args[0])
+                self.dt = 1.0/float(SampleRate)
+                self.t0 = 0.0
         else :
             raise ValueError('Unrecognized number of arguments to Waveform constructor')
-    
+
     def fft(self) :
         return self.dt * np.fft.fft()
-    
+
     def Time(self) :
         """
         Return array of the time data.
-        
+
         This function returns all the values of time at which the data
         is known.
         """
         return np.linspace(self.t0, self.t0+(self.N-1)*self.dt, self.N, endpoint=True)
-    
+
     def PadWithZeroToSameLengthAs(self, other) :
         self.data = np.append(self.data, [0.0]*(other.N-self.N))
         self.N = other.N
         return self
-    
+
     def Interpolate(self, t) :
         """
         Interpolate the Waveform onto the given time data.
-        
+
         If the argument is another Waveform, this Waveform is just
         interpolated onto the time data from that one.
-        
+
         Note that if the given times are outside the times known to
         this Waveform, the "interpolated" data is set to 0.
         """
@@ -77,23 +80,23 @@ class Waveform :
         self.dt = t[1]-t[0]
         self.N = len(t)
         return self
-    
+
     def AddToTime(self, t0) :
         """
         Shift the Waveform's time axis by adding 't0'.
         """
         self.t0 = t0
         return self
-    
+
     def __add__(self, other) :
         """
         Add data from the second Waveform to the first.
-        
+
         This function returns a new Waveform with the combined data
         from two separate Waveform objects.  It may be called with
         something like
         >>> W3 = W1 + W2
-        
+
         Note that the Waveforms may have different lengths, in which
         case the returned Waveform just has the longer length; the
         shorter Waveform is assumed to just be 0 when it does not
@@ -117,7 +120,7 @@ class Waveform :
         for i in range(len(a.data)) :
             a.data[i] += b.data[i]
         return a
-    
+
     def __mul__(self, scale) :
         """
         Return a new Waveform with data multiplied by 'scale'.
@@ -125,17 +128,17 @@ class Waveform :
         a = Waveform(self)
         a.data *= scale
         return a
-    
+
     def __rmul__(self, scale) :
         """
         Return a new Waveform with data multiplied by 'scale'.
         """
         return self*scale
-    
+
     def Rotate(self, time) :
         """
         Return a new Waveform with time shifted periodically.
-        
+
         Because of the periodic nature of finite signals assumed by
         the Fourier transform, we can shift a signal in time by simply
         moving some of the data from the end of the array to the
@@ -145,20 +148,19 @@ class Waveform :
         i = int(time/a.dt)
         a.data = np.concatenate((a.data[-i:], a.data[:-i]))
         return a
-    
+
     def Play(self) :
         """
         Play the Waveform as a sound through the computer's speakers.
-        
+
         Given a Waveform object 'W', you can play it with the command
         >>> W.Play()
-        
+
         Note that the volume is adjusted so that the loudest part of
         the Waveform is precisely as loud as possible (no more; no
         less).  But then, the signal passes through the sound card and
         speaker, which may adjust the volume themselves.
         """
-        import pyaudio
         import wave
         import struct
         chunk = 1024
@@ -173,11 +175,11 @@ class Waveform :
         stream.write(data)
         stream.close()
         p.terminate()
-    
+
     def WriteWAVFile(self, WAVFileName) :
         """
         Write the Waveform to file as a WAV audio file.
-        
+
         With a Waveform object 'W', you can call this function with
         something along the lines of:
         >>> W.WriteWAVFile('SomeFileName.wav')
@@ -199,31 +201,30 @@ class Waveform :
         stream.setnframes(self.N)
         stream.writeframes( data )
         stream.close()
-    
 
 
-def RecordWaveform(RecordingTime=5.0, SamplingFrequency=48000, Normalized=True) :
+
+def RecordWaveform(RecordingTime=5.0, SamplingFrequency=DefaultSamplingFrequency, Normalized=True) :
     """
     Record audio from the computer's microphone.
-    
+
     A Waveform object is returned, containing the recorded data.  The
     optional arguments are the number of seconds for which to record,
     the sampling frequency (in Hertz), and whether or not the maximum
     absolute value in the data is 1.
     """
-    import pyaudio
     import wave
     import struct
-    
+
     chunk = 1024
     FORMAT = pyaudio.paInt32 # Record as signed "4-byte" ints
     fmt = "%ii" # read signed "4-byte" ints
     offset = 0
     scale = 2147483648.0
     CHANNELS = 1
-    
+
     ## Do the actual recording
-    print("Recording...")
+    print("Recording..."); sys.stdout.flush()
     p = pyaudio.PyAudio()
     all = range(0, SamplingFrequency / chunk * RecordingTime)
     stream = p.open(format = FORMAT,
@@ -237,7 +238,7 @@ def RecordWaveform(RecordingTime=5.0, SamplingFrequency=48000, Normalized=True) 
     stream.close()
     p.terminate()
     print("Done recording.")
-    
+
     ## The data are stored as a string of "4-byte" integers in the
     ## range [-2147483648,2147483648).  We need to convert this to
     ## floats in the range [-1,1), and then create the Waveform
@@ -257,7 +258,7 @@ def RecordWaveform(RecordingTime=5.0, SamplingFrequency=48000, Normalized=True) 
 def _InnerProduct(W1FFT, W2FFT, PSDList, df) :
     """
     Evaluate inner product of two frequency-domain signals.
-    
+
     This is a very simple function that assumes the input data all
     have the correct size, and are of the correct type.
     """
@@ -276,8 +277,8 @@ def _TimeToPositiveFrequencies(N, dt) :
 def Match(W1, W2, Noise) :
     """
     Return match as function of time offset between two Waveforms.
-    
-    
+
+
     """
     import numpy as np
     import scipy.interpolate as spi
@@ -338,43 +339,43 @@ def Match(W1, W2, Noise) :
 def SimplifyNoisyData(x, y, n=10000) :
     """
     Reduce number of points in (x,y) by splitting into bins and finding max and min of each.
-    
+
     Without some simplification, matplotlib fails when asked to plot
     large data sets.  But if we just plot every tenth point (say) of
     noisy data, the peaks look different.  It would be better to go
     through the data to find the max and min values in every ten
     points, and then plot those.  That is the basic idea behind this
     function.
-    
+
     Note that `n` is the number of bins for the max and for the min; the returned data has 2*n data points in X and Y.
-    
+
     Based on <http://stackoverflow.com/a/8881973/1194883>
-    
+
     """
-    
+
     if(y.size%(2*n)==0) :
         N = n
     else :
         N = n-1
-    
+
     # Divide into chunks
     ychunksize = y.size // N
     ychunks = y[:ychunksize*N].reshape((-1, ychunksize))
     xchunksize = y.size // (2*N)
     xchunks = x[:xchunksize*2*N].reshape((-1, xchunksize))
-    
+
     # Calculate the max and min of chunksize-element chunks...
     max_env = ychunks.max(axis=1)
     min_env = ychunks.min(axis=1)
     X = xchunks.mean(axis=1)
-    
+
     # If necessary, include the missing end
     if(n!=N) :
         max_env = np.append(max_env, np.max(y[ychunksize*N:]))
         min_env = np.append(min_env, np.min(y[ychunksize*N:]))
         X = np.append(X, [(X[-1]+x[-1])/2., x[-1]])
-        
+
     # Interleave the max and min to form Y
     Y = np.ravel([max_env, min_env], order='F')
-    
+
     return X,Y
