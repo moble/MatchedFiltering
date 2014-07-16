@@ -283,6 +283,8 @@ def Match(W1, W2, Noise) :
     import numpy as np
     import scipy.interpolate as spi
     import numpy.fft as npfft
+    import Utils
+    Waveform = Utils.Waveform
     if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform))) :
         ErrorString = \
         """You gave me "{0}", "{1}", and "{2}" objects.  I need "Waveform"
