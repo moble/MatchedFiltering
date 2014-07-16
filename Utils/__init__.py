@@ -11,11 +11,24 @@ SecondsPerMegaparsec = 1.02927125e14 # seconds
 DefaultSamplingFrequency = 8192 # Hertz [integer]
 DefaultWaveformLength = 20.0 # seconds
 PaddingLength = 0.5 # seconds [extra time for ringdown]
-WindowLength = PaddingLength
+WindowLength = 0.5 # seconds [amount of time needed to turn on]
 
-def _WindowFunction(NormalizedTime) :
+def _WindowFunction(NormalizedTime):
     """Window data, turning on from 0.0 to 1.0"""
-    return numpy.array([0.0 if t<=0.0 else (1.0 if t>=1.0 else 1.0 / (1.0 + numpy.exp(1.0/t - 1.0/(1-t)))) for t in NormalizedTime])
+    w = numpy.empty_like(NormalizedTime)
+    for i,t in enumerate(NormalizedTime):
+        if t<=1.0e-15:
+            w[i] = 0.0
+        elif t-1.0>=-1.0e-15:
+            w[i] = 1.0
+        else:
+            exponent = 1.0/t - 1.0/(1.0-t)
+            if exponent>450.0:
+                w[i] = 0.0
+            else:
+                w[i] = 1.0 / (1.0 + numpy.exp(exponent))
+    return w
+    # return numpy.array([0.0 if t<=1.0e-15 else (1.0 if t-1.0>=-1.0e-15 else 1.0 / (1.0 + numpy.exp(1.0/t - 1.0/(1-t)))) for t in NormalizedTime])
 
 class Waveform :
     """Container for time-domain data.
@@ -68,9 +81,24 @@ class Waveform :
             Time = numpy.arange(tLast - DefaultWaveformLength, tLast, self.dt)
             self.N = len(Time)
             self.data = scipy.interpolate.splev(Time, Mag) * numpy.sin(scipy.interpolate.splev(Time, Arg)-scipy.interpolate.splev(Time[0], Arg))
-            self.data[-(PaddingLength/self.dt):] = 0.0
+            # Roll the data on slowly at the beginning
             NWindow = int(WindowLength/self.dt)
             self.data[:NWindow] = self.data[:NWindow]*_WindowFunction((Time[:NWindow]-Time[0])/(Time[NWindow]-Time[0]))
+            # Roll off the data at the end by extrapolating the phase and logarithmic amplitude naively, and blending that into the real data
+            N_pad = int(PaddingLength/self.dt)
+            t1 = tIn[-1]
+            tm = tIn[numpy.argmax(numpy.abs(filedata[:,1]))]
+            t0 = 0.5*(t1+tm)
+            i1 = numpy.argmin(numpy.abs(Time-t1))
+            i0 = numpy.argmin(numpy.abs(Time-t0))
+            chi0 = numpy.log(scipy.interpolate.splev(t0, Mag))
+            chi1 = numpy.log(scipy.interpolate.splev(t1, Mag))
+            phi0 = scipy.interpolate.splev(t0, Arg)-scipy.interpolate.splev(Time[0], Arg)
+            phi1 = scipy.interpolate.splev(t1, Arg)-scipy.interpolate.splev(Time[0], Arg)
+            w = _WindowFunction((t1-Time[i0:i1])/(t1-t0))
+            self.data[i0:i1] = w * self.data[i0:i1] \
+                               + (1.0-w) * numpy.exp(((chi1-chi0)/(t1-t0))*(Time[i0:i1]-t0)+chi0) * numpy.sin(((phi1-phi0)/(t1-t0))*(Time[i0:i1]-t0)+phi0)
+            self.data[i1:] = numpy.exp(((chi1-chi0)/(t1-t0))*(Time[i1:]-t0)+chi0) * numpy.sin(((phi1-phi0)/(t1-t0))*(Time[i1:]-t0)+phi0)
         else :
             raise ValueError('Unrecognized number of arguments to Waveform constructor')
 
@@ -261,7 +289,6 @@ def _TimeToPositiveFrequencies(N, dt) :
 def Match(W1, W2, Noise) :
     """
     Return match as function of time offset between two Waveforms.
-
 
     """
     import numpy as np
