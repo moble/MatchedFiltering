@@ -20,9 +20,9 @@ def _WindowFunction(NormalizedTime) :
 class Waveform :
     """Container for time-domain data.
 
-    An object of class Waveform contains an initial time 't0', a
-    time-step size 'dt', the total number of time steps 'N', and
-    real-valued data for each of those time steps 'data'.
+    An object of class Waveform contains the time-step size 'dt', the
+    total number of time steps 'N', and real-valued data for each of
+    those time steps 'data'.
 
     You can initialize a Waveform by giving the name of some data file
     or by recording through the computer's speakers.  For example:
@@ -40,20 +40,17 @@ class Waveform :
 
     def __init__(self, *args) :
         if(len(args) == 0) :
-            self.t0 = 0.0
             self.dt = 0.0
             self.N = 0
             self.data = numpy.empty(0)
         elif(len(args) == 1) :
             if(isinstance(args[0], Waveform)) : # If the input argument is another Waveform, just copy it
-                self.t0 = args[0].t0
                 self.dt = args[0].dt
                 self.N = args[0].N
                 self.data = numpy.array(args[0].data)
             else : # Otherwise, assume it's a file and try to read it
                 with open(args[0], 'r') as f:
                     first_line = f.readline()
-                self.t0 = 0.0
                 self.dt = float(first_line[7:-1])
                 self.data = numpy.loadtxt(args[0])
                 self.N = len(self.data)
@@ -67,15 +64,13 @@ class Waveform :
             Mag = scipy.interpolate.splrep(tIn, filedata[:,1] * TotalMassInSolarMasses * Msun / (DistanceInMegaparsecs*SecondsPerMegaparsec), k=1, s=0)
             Arg = scipy.interpolate.splrep(tIn, filedata[:,2], k=1, s=0)
             tLast = tIn[-1] + PaddingLength
-            self.t0 = tLast - DefaultWaveformLength
             self.dt = 1.0/SamplingFrequency
-            Time = numpy.arange(self.t0, tLast, self.dt)
+            Time = numpy.arange(tLast - DefaultWaveformLength, tLast, self.dt)
             self.N = len(Time)
             self.data = scipy.interpolate.splev(Time, Mag) * numpy.sin(scipy.interpolate.splev(Time, Arg)-scipy.interpolate.splev(Time[0], Arg))
             self.data[-(PaddingLength/self.dt):] = 0.0
             NWindow = int(WindowLength/self.dt)
             self.data[:NWindow] = self.data[:NWindow]*_WindowFunction((Time[:NWindow]-Time[0])/(Time[NWindow]-Time[0]))
-            self.t0 = 0.0
         else :
             raise ValueError('Unrecognized number of arguments to Waveform constructor')
 
@@ -90,7 +85,7 @@ class Waveform :
         This function returns all the values of time at which the data
         is known.
         """
-        return numpy.linspace(self.t0, self.t0+(self.N-1)*self.dt, self.N, endpoint=True)
+        return numpy.linspace(0.0, (self.N-1)*self.dt, self.N, endpoint=True)
 
     @property
     def f(self) :
@@ -115,7 +110,6 @@ class Waveform :
         if(isinstance(t, Waveform)) :
             return self.InterpolateTime(t.Time())
         self.data = numpy.interp(t, self.Time(), self.data, 0.0, 0.0)
-        self.t0 = t[0]
         self.dt = t[1]-t[0]
         self.N = len(t)
         return self
@@ -137,16 +131,15 @@ class Waveform :
         step.  However, naive interpolation is done in this case
         (rather than upsampling), which might cause subtle problems.
         """
-        if( (self.t0==other.t0) and (self.N==other.N) and (self.dt==other.dt) ) :
+        if( (self.N==other.N) and (self.dt==other.dt) ) :
             a = Waveform(self)
             a.data += other.data
             return a
         a = Waveform(self)
         b = Waveform(other)
-        t0 = min(a.t0, b.t0)
-        t1 = max(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt)
+        t1 = max((a.N-1)*a.dt, (b.N-1)*b.dt)
         dt = min(a.dt, b.dt)
-        t = numpy.linspace(t0, t1, int((t1-t0)/dt)+1) # Make sure that t0 and t1 are included
+        t = numpy.linspace(0.0, t1, int(t1/dt)+1) # Make sure that t1 is included
         a.Interpolate(t)
         b.Interpolate(t)
         for i in range(len(a.data)) :
@@ -237,7 +230,6 @@ class Waveform :
 #     ## object.
 #     data = ''.join(all)
 #     W = Waveform()
-#     W.t0 = 0.0
 #     W.dt = 1.0/float(SamplingFrequency)
 #     W.N = len(data)/struct.calcsize('1i')
 #     fmt = fmt % W.N
@@ -288,13 +280,10 @@ def Match(W1, W2, Noise) :
         a = Waveform(W1)
         b = Waveform(W2)
         c = Waveform(Noise)
-        t0 = min(a.t0, b.t0, c.t0)
-        #print(a.t0, b.t0, c.t0, t0)
-        t1 = max(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt, c.t0+(c.N-1)*c.dt)
-        #print(a.t0+(a.N-1)*a.dt, b.t0+(b.N-1)*b.dt, c.t0+(c.N-1)*c.dt, t1)
+        t1 = max((a.N-1)*a.dt, (b.N-1)*b.dt, (c.N-1)*c.dt)
         dt = min(a.dt, b.dt, c.dt)
         #print(a.dt, b.dt, c.dt, dt)
-        t = numpy.linspace(t0, t1, int((t1-t0)/dt)+1) # Make sure that t0 and t1 are included
+        t = numpy.linspace(0.0, t1, int(t1/dt)+1) # Make sure that t1 is included
         #print(len(t))
         a.Interpolate(t)
         b.Interpolate(t)
