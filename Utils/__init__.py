@@ -78,7 +78,7 @@ class Waveform :
             Arg = scipy.interpolate.splrep(tIn, filedata[:,2], k=1, s=0)
             tLast = tIn[-1] + PaddingLength
             self.dt = 1.0/SamplingFrequency
-            Time = numpy.arange(tLast - DefaultWaveformLength, tLast, self.dt)
+            Time = numpy.linspace(tLast - DefaultWaveformLength, tLast, int(DefaultWaveformLength/self.dt), endpoint=True)
             self.N = len(Time)
             self.data = scipy.interpolate.splev(Time, Mag) * numpy.sin(scipy.interpolate.splev(Time, Arg)-scipy.interpolate.splev(Time[0], Arg))
             # Roll the data on slowly at the beginning
