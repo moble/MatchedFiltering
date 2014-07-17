@@ -2,7 +2,6 @@ import sys, os
 import numpy
 import scipy
 import scipy.interpolate
-import pyaudio
 
 sys.path.append(os.path.dirname(__file__))
 

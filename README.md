@@ -45,23 +45,17 @@ git clone --depth 1 https://github.com/MOBle/MatchedFiltering.git
 Otherwise, you are presumably reading this in the code itself.
 
 You will need a reasonably current installation of python, along with
-[ipython-notebook][1] and [pylab][2].  For full functionality, you
-will also need the [pyaudio module][3].
+[ipython-notebook][1] and [pylab][2].  The easiest way to install
+these is through [anaconda][4].  If you want to use the
+`MatchedFilteringWithMicrophone` notebooks, you will also need the
+[pyaudio module][3].
 
-First, go into the top directory of the code: `MatchedFiltering`.  In
-it, there should be an executable file called `CreateSounds.py` which
-will create a set of WAV files from real gravitational-waveform data.
-These files will be needed later.  To create them, run
-    python CreateSounds.py
-This will run through a set of waveforms it creates.
-
-Now, from that same directory, issue the command
-    ipython notebook --pylab
+Now, from the `MathchedFiltering` directory, issue the command
+```bash
+    ipython notebook --pylab=inline MatchedFiltering.ipynb
+```
 This will start an ipython session, but should switch to your default
-web browser, where you will interact with the session.  Next, click on
-the file `MatchedFilteringDemonstration.ipynb`, and follow the
-instructions in there.  You may need to change the path in the first
-cell to the one you actually used.
+web browser, where you will interact with the session.
 
 
 
@@ -99,15 +93,14 @@ The steps to set up the computer are
 2. open a terminal
 3. `git clone` the repository onto each computer
 4. cd into `MatchedFiltering`
-5. run `CreateSounds.py`
+5. run `CreateSearchData.py`
 6. start the ipython session
-7. select the demonstration notebook
 
 Steps (0) and (1) in particular are absolutely crucial, and are
 sufficiently complicated that these should probably be done well in
 advance.  Depending on the computer skills of the students, and their
 familiarity with your particular computers, they may be able to help
-with steps (2) through (7).
+with steps (2) through (6).
 
 
 
@@ -115,3 +108,4 @@ with steps (2) through (7).
 [1]: http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html
 [2]: http://www.scipy.org/PyLab
 [3]: http://people.csail.mit.edu/hubert/pyaudio/
+[4]: http://continuum.io/downloads
