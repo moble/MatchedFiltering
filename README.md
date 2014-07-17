@@ -96,11 +96,11 @@ The steps to set up the computer are
 5. run `CreateSearchData.py`
 6. start the ipython session
 
-Steps (0) and (1) in particular are absolutely crucial, and are
+Steps (1) and (2) in particular are absolutely crucial, and are
 sufficiently complicated that these should probably be done well in
 advance.  Depending on the computer skills of the students, and their
 familiarity with your particular computers, they may be able to help
-with steps (2) through (6).
+with steps (3) through (7).
 
 
 
