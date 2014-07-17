@@ -202,8 +202,7 @@ class Waveform :
         return a
 
     def Play(self) :
-        """
-        Play the Waveform as a sound through the computer's speakers.
+        """Play the Waveform as a sound through the computer's speakers.
 
         Given a Waveform object 'W', you can play it with the command
         >>> W.Play()
@@ -212,59 +211,27 @@ class Waveform :
         the Waveform is precisely as loud as possible (no more; no
         less).  But then, the signal passes through the sound card and
         speaker, which may adjust the volume themselves.
+
         """
         from IPython.display import Audio, display
         display(Audio(self.data, rate=1.0/self.dt, autoplay=True))
 
+    def Audio(self) :
+        """Play the Waveform as a sound through the computer's speakers.
 
-# def RecordWaveform(RecordingTime=5.0, SamplingFrequency=DefaultSamplingFrequency, Normalized=True) :
-#     """
-#     Record audio from the computer's microphone.
+        Given a Waveform object 'W', you can display its audio widget
+        it with the command
+        >>> W.Audio()
+        Then click on the play button to listen to it.
 
-#     A Waveform object is returned, containing the recorded data.  The
-#     optional arguments are the number of seconds for which to record,
-#     the sampling frequency (in Hertz), and whether or not the maximum
-#     absolute value in the data is 1.
-#     """
-#     import wave
-#     import struct
+        Note that the volume is adjusted so that the loudest part of
+        the Waveform is precisely as loud as possible (no more; no
+        less).  But then, the signal passes through the sound card and
+        speaker, which may adjust the volume themselves.
 
-#     chunk = 1024
-#     FORMAT = pyaudio.paInt32 # Record as signed "4-byte" ints
-#     fmt = "%ii" # read signed "4-byte" ints
-#     offset = 0
-#     scale = 2147483648.0
-#     CHANNELS = 1
-
-#     ## Do the actual recording
-#     print("Recording..."); sys.stdout.flush()
-#     p = pyaudio.PyAudio()
-#     all = range(0, SamplingFrequency / chunk * RecordingTime)
-#     stream = p.open(format = FORMAT,
-#                     channels = CHANNELS,
-#                     rate = SamplingFrequency,
-#                     input = True,
-#                     frames_per_buffer = chunk)
-#     for i in range(0, SamplingFrequency / chunk * RecordingTime) :
-#         data = stream.read(chunk)
-#         all[i] = data
-#     stream.close()
-#     p.terminate()
-#     print("Done recording.")
-
-#     ## The data are stored as a string of "4-byte" integers in the
-#     ## range [-2147483648,2147483648).  We need to convert this to
-#     ## floats in the range [-1,1), and then create the Waveform
-#     ## object.
-#     data = ''.join(all)
-#     W = Waveform()
-#     W.dt = 1.0/float(SamplingFrequency)
-#     W.N = len(data)/struct.calcsize('1i')
-#     fmt = fmt % W.N
-#     W.data = (numpy.array(struct.unpack(fmt, data), dtype=float)-offset) / scale
-#     if(Normalized) :
-#         W.data = W.data / max(abs(W.data))
-#     return W
+        """
+        from IPython.display import Audio, display
+        display(Audio(self.data, rate=1.0/self.dt, autoplay=False))
 
 
 def _InnerProduct(W1FFT, W2FFT, PSDList, df) :
@@ -276,6 +243,7 @@ def _InnerProduct(W1FFT, W2FFT, PSDList, df) :
     """
     return 4*df*sum(W1FFT * numpy.conj(W2FFT) / PSDList).real
 
+
 def _TimeToPositiveFrequencies(N, dt) :
     """
     Return the single-sided frequency-space equivalent.
@@ -286,56 +254,37 @@ def _TimeToPositiveFrequencies(N, dt) :
     df = 1.0 / (N*dt)
     return numpy.arange(n) * df
 
-def Match(W1, W2, Noise) :
-    """
-    Return match as function of time offset between two Waveforms.
 
-    """
-    import numpy as np
-    import scipy.interpolate as spi
+def Match(W1, W2, Noise) :
     import numpy.fft as npfft
-    if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform))) :
+    if((not isinstance(W1, Waveform)) or (not isinstance(W2, Waveform)) or (not isinstance(Noise, Waveform))) :
         ErrorString = \
         """You gave me "{0}", "{1}", and "{2}" objects.  I need "Waveform"
         objects.  Try again.""".format(W1.__class__.__name__, W2.__class__.__name__,
                                        Noise.__class__.__name__)
         raise TypeError(ErrorString)
-    a = W1
-    b = W2
-    c = Noise
-    if((not a.N==b.N) or (not a.dt==b.dt) or (not a.N==c.N) or (not a.dt==c.dt)) :
-        a = Waveform(W1)
-        b = Waveform(W2)
-        c = Waveform(Noise)
-        t1 = max((a.N-1)*a.dt, (b.N-1)*b.dt, (c.N-1)*c.dt)
-        dt = min(a.dt, b.dt, c.dt)
-        #print(a.dt, b.dt, c.dt, dt)
-        t = numpy.linspace(0.0, t1, int(t1/dt)+1) # Make sure that t1 is included
-        #print(len(t))
-        a.Interpolate(t)
-        b.Interpolate(t)
-        c.Interpolate(t)
-    N = a.N
-    dt = a.dt
+    if((not W1.N==W2.N) or (not W1.dt==W2.dt) or (not W1.N==Noise.N) or (not W1.dt==Noise.dt)) :
+        raise ValueError("Disagreement among input sizes")
+    N = W1.N
+    dt = W1.dt
     df = 1.0/(N*dt)
-    Frequencies = npfft.fftfreq(Noise.N, Noise.dt)
-    Frequencies = numpy.concatenate((Frequencies[len(Frequencies)/2:], Frequencies[:len(Frequencies)/2]))
-    # PSD = Noise.dt * npfft.fft(Noise.data)
-    PSD = npfft.fft(Noise.data) / Noise.N
-    PSD = abs(PSD)**2
-    PSD = numpy.concatenate((PSD[len(PSD)/2:], PSD[:len(PSD)/2]))
-    PSD = PSD + PSD[::-1] # Make sure it's symmetric
-    SmoothedPSD = SavitzkyGolay(PSD, 101, 2)
-    # SmoothedPSD = SavitzkyGolay(PSD, 3, 0)
-    PSD = spi.UnivariateSpline(Frequencies, SmoothedPSD, s=0)
-    f = _TimeToPositiveFrequencies(N, dt)
-    psd = PSD(f)
-    a = dt*npfft.rfft(a.data)
-    b = dt*npfft.rfft(b.data)
-    a /= dt * numpy.sqrt(_InnerProduct(a, a, psd, df))
-    b /= dt * numpy.sqrt(_InnerProduct(b, b, psd, df))
-    # return [2*dt*abs(npfft.irfft( a * numpy.conj(b) / psd )), dt, N]
-    return 2*dt*abs(npfft.irfft( a * numpy.conj(b) / psd ))
+    psd = abs(Noise.fft())**2
+    SeismicWall = 35.0 # Hz
+    a = W1.fft()
+    b = W2.fft()
+    a /= W1.dt*numpy.sqrt(_InnerProduct(a, a, psd, df))
+    b /= W2.dt*numpy.sqrt(_InnerProduct(b, b, psd, df))
+    integrand = a * numpy.conj(b) / psd
+    integrand[:int(SeismicWall/df)] = 0.0 # Zero below the seismic wall
+    integrand[-int(SeismicWall/df):] = 0.0 # Zero above the negative seismic wall
+    integrand[len(integrand)/4:3*len(integrand)/4] = 0.0 # Zero above/below a simple upper frequency limit
+    return 4*W1.dt*abs(npfft.ifft( integrand ))
+
+    # a = dt*npfft.rfft(a.data)
+    # b = dt*npfft.rfft(b.data)
+    # a /= dt * numpy.sqrt(_InnerProduct(a, a, psd, df))
+    # b /= dt * numpy.sqrt(_InnerProduct(b, b, psd, df))
+    # return 2*dt*abs(npfft.irfft( a * numpy.conj(b) / psd ))
 
 
 def SavitzkyGolay(y, window_size, order, deriv=0):
@@ -410,48 +359,3 @@ def SavitzkyGolay(y, window_size, order, deriv=0):
     lastvals = y[-1] + numpy.abs(y[-half_window-1:-1][::-1] - y[-1])
     y = numpy.concatenate((firstvals, y, lastvals))
     return numpy.convolve( m, y, mode='valid')
-
-
-def SimplifyNoisyData(x, y, n=10000) :
-    """
-    Reduce number of points in (x,y) by splitting into bins and finding max and min of each.
-
-    Without some simplification, matplotlib fails when asked to plot
-    large data sets.  But if we just plot every tenth point (say) of
-    noisy data, the peaks look different.  It would be better to go
-    through the data to find the max and min values in every ten
-    points, and then plot those.  That is the basic idea behind this
-    function.
-
-    Note that `n` is the number of bins for the max and for the min; the returned data has 2*n data points in X and Y.
-
-    Based on <http://stackoverflow.com/a/8881973/1194883>
-
-    """
-
-    if(y.size%(2*n)==0) :
-        N = n
-    else :
-        N = n-1
-
-    # Divide into chunks
-    ychunksize = y.size // N
-    ychunks = y[:ychunksize*N].reshape((-1, ychunksize))
-    xchunksize = y.size // (2*N)
-    xchunks = x[:xchunksize*2*N].reshape((-1, xchunksize))
-
-    # Calculate the max and min of chunksize-element chunks...
-    max_env = ychunks.max(axis=1)
-    min_env = ychunks.min(axis=1)
-    X = xchunks.mean(axis=1)
-
-    # If necessary, include the missing end
-    if(n!=N) :
-        max_env = numpy.append(max_env, numpy.max(y[ychunksize*N:]))
-        min_env = numpy.append(min_env, numpy.min(y[ychunksize*N:]))
-        X = numpy.append(X, [(X[-1]+x[-1])/2., x[-1]])
-
-    # Interleave the max and min to form Y
-    Y = numpy.ravel([max_env, min_env], order='F')
-
-    return X,Y
