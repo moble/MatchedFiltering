@@ -1906,7 +1906,9 @@ $(document).ready(function(){
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="discrete-fourier-transforms">(Discrete) Fourier transforms</h1>
-
+<p><span class="math">\[
+s(t) = \sum_{f_i} \left[ \tilde{s}_{f_i}\, \sin (2\,\pi\,f_i\,t + \phi_i) \right]
+\]</span></p>
 <p>Discrete frequencies: <span class="math">\(f_i\)</span></p>
 <p>FT amplitude: <span class="math">\(\tilde{s}_{f_i}\)</span></p>
 <p>FT phase: <span class="math">\(\phi_{f_i}\)</span></p>
@@ -10051,6 +10053,9 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  {\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}}
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10063,6 +10068,9 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10075,6 +10083,10 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
+  \cos \left[ \delta\phi_{f_i} \right]
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10087,6 +10099,10 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
+  \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10099,6 +10115,10 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  \sum_{f_{i}} \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
+  \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10111,6 +10131,11 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
+<p><span class="math">\[
+  \big\langle d \big| s \big\rangle_{\delta t}
+  = \sum_{f_{i}} \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
+  \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
+\]</span></p>
 </div>
 </div>
 </div></section>
@@ -10123,7 +10148,11 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="matched-filtering">Matched filtering</h1>
-
+<p><span class="math">\[
+  \big\langle d \big| s \big\rangle_{\delta t}
+  = \sum_{f_{i}} \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
+  \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
+\]</span></p>
 <p>Think of this as either</p>
 <ul>
 <li>Filtering the data</li>
