@@ -1,36 +1,32 @@
-This package is designed to be a simple demonstration of the
-principles of matched filtering.  It uses the analogy of LIGO as a
-microphone to explain the basic ideas, using a microphone attached to
-the computer to study data as a function of time, noise sources, and
-real signals, as well as headphones or a speaker to play back those
-signals and others.  Examples are given where a signal is buried in
-the noise and extracted using matched filtering.  Real LIGO data and
-accurate gravitational waveforms are also included with this code, and
-used for further examples to complete the analogy.  The concepts
-introduced here can be applied far more widely in all areas of data
-analysis.
+This package is designed to be a simple demonstration of the principles of
+matched filtering.  It uses the analogy of LIGO as a microphone to explain the
+basic ideas, using a microphone attached to the computer to study data as a
+function of time, noise sources, and real signals, as well as headphones or a
+speaker to play back those signals and others.  Examples are given where a
+signal is buried in the noise and extracted using matched filtering.  Real LIGO
+data and accurate gravitational waveforms are also included with this code, and
+used for further examples to complete the analogy.  The concepts introduced
+here can be applied far more widely in all areas of data analysis.
 
-Fourier transforms are introduced, starting with a simple example of a
-pure tone (which can be played by the computer), and progressing to
-Fourier transforms of noise and gravitational-wave signals.  The
-matched filter is then introduced by progressively building the
-formula with simple explanations for each term.  Discussion of these
-concepts is interwoven with practice using them.
+Fourier transforms are introduced, starting with a simple example of a pure
+tone (which can be played by the computer), and progressing to Fourier
+transforms of noise and gravitational-wave signals.  The matched filter is then
+introduced by progressively building the formula with simple explanations for
+each term.  Discussion of these concepts is interwoven with practice using
+them.
 
-The material is presented as an ipython notebook -- which looks and
-acts basically like Mathematica.  The notebook includes text
-explaining the concepts and code.  This allows the explanations to be
-included (with latex equations) right among the code, and all in a
-live python session.  No familiarity with python is necessary for the
-student, though the computer will need to be set up by someone with
-good technical skills.
+The material is presented as a Jupyter notebook -- which looks and acts
+basically like Mathematica.  The notebook includes text explaining the concepts
+and code.  This allows the explanations to be included (with latex equations)
+right among the code, and all in a live python session.  No familiarity with
+python is necessary for the student, though the computer will need to be set up
+by someone with good technical skills.
 
-A second notebook is also included for more demonstrations of the
-Fourier transform.  This notebook makes it easy to record a sound --
-tuning forks, musical instruments, or whatever the student is curious
-about -- and look at its Fourier transform.  This encourages the
-student to play with the ideas a little, experimenting to gain
-understanding.
+A second notebook is also included for more demonstrations of the Fourier
+transform.  This notebook makes it easy to record a sound -- tuning forks,
+musical instruments, or whatever the student is curious about -- and look at
+its Fourier transform.  This encourages the student to play with the ideas a
+little, experimenting to gain understanding.
 
 
 
@@ -40,11 +36,16 @@ If you are reading this README from the github project page, you
 should first download the package to your own computer with something
 like
 ```bash
-git clone --depth 1 https://github.com/MOBle/MatchedFiltering.git
+git clone --depth 1 https://github.com/moble/MatchedFiltering.git
 ```
 Otherwise, you are presumably reading this in the code itself.
 
-You will need a reasonably current installation of python, along with
+You will need a reasonably current installation of python, preferably just the
+standard [anaconda distribution](https://store.continuum.io/anaconda/).  If you
+install the full anaconda distribution, you won't need to install anything
+more.  Otherwise, you will have to install ipython, matplotlib, and numpy.
+
+along with
 [ipython-notebook][1] and [pylab][2].  The easiest way to install
 these is through [anaconda][4].  If you want to use the
 `MatchedFilteringWithMicrophone` notebooks, you will also need the
@@ -61,46 +62,39 @@ web browser, where you will interact with the session.
 
 Notes for classroom use
 =======================
-There are three reasonable ways to deliver this demonstration to
-students: as a presentation, individually on the students' personal
-computers, and together in a computer lab.
 
-Most likely, the presentation option is the least useful to students.
-Most students benefit enormously from being able to interact with the
-notebook personally.  They will be more interested, able to read along
-at their own pace, and play with the parameters.  If this is just not
-possible, it would be best to go slowly and ask lots of questions of
-the students, possibly allowing one student to actually run the
-commands while the teacher engages from off to the side.
+There are three reasonable ways to deliver this demonstration to students: as a
+presentation, individually on the students' personal computers, and together in
+a computer lab.
 
-A more preferable option may be having the students download and run
-the code themselves.  The only caveat here is that installation of
-ipython, pylab, and pyaudio may be too much to ask of students, unless
-they are expected to be very computer literate.  If the students are
-capable, there are questions included in the notebook.  Their answers
-could be turned in as a homework assignment, or a quiz given on the
-material to ensure that students actually go through the notebook.
+Most likely, the presentation option is the least useful to students.  Most
+students benefit enormously from being able to interact with the notebook
+personally.  They will be more interested, able to read along at their own
+pace, and play with the parameters.  If this is just not possible, it would be
+best to go slowly and ask lots of questions of the students, possibly allowing
+one student to actually run the commands while the teacher engages from off to
+the side.
 
-If this will be presented together in a computer lab, it is best if
-things are set up as much as possible on each computer beforehand.
-The computers need to be using different accounts (with different home
-directories), or ipython will get screwed up and run into errors.
+A more preferable option may be having the students download and run the code
+themselves.  The only caveat here is that the students will need to install the
+dependencies.  With [anaconda](https://store.continuum.io/anaconda/), this is
+not a problem.  Assuming the students are capable, there are questions included in
+the notebook.  Their answers could be turned in as a homework assignment, or a
+quiz given on the material to ensure that students actually go through the
+notebook.
 
-The steps to set up the computer are
+If this will be presented together in a computer lab, it is best if things are
+set up as much as possible on each computer beforehand.  The computers need to
+be using different accounts (with different home directories), or ipython will
+get screwed up and run into errors.
 
-0. install all necessary packages
-1. get the audio (input and output) working
-2. open a terminal
-3. `git clone` the repository onto each computer
-4. cd into `MatchedFiltering`
-5. run `CreateSearchData.py`
-6. start the ipython session
+To run the notebook, make sure [anaconda](http://continuum.io/downloads) is
+installed, then open a terminal and run the following:
+```python
+git clone --depth 1 git@github.com:moble/MatchedFiltering.git
+cd MatchedFiltering
 
-Steps (1) and (2) in particular are absolutely crucial, and are
-sufficiently complicated that these should probably be done well in
-advance.  Depending on the computer skills of the students, and their
-familiarity with your particular computers, they may be able to help
-with steps (3) through (7).
+```
 
 
 
