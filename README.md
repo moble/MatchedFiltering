@@ -1,3 +1,15 @@
+Quick start
+===========
+
+  * The presentation can be found
+    [here](http://moble.github.io/MatchedFiltering/Presentation.slides.html)
+  * A preview of the notebook can be seen
+    [here](http://nbviewer.ipython.org/github/moble/MatchedFiltering/blob/gh-pages/MatchedFiltering.ipynb)
+
+
+Details
+=======
+
 This package is designed to be a simple demonstration of the principles of
 matched filtering.  It uses the analogy of LIGO as a microphone to explain the
 basic ideas, using a microphone attached to the computer to study data as a
@@ -43,17 +55,15 @@ Otherwise, you are presumably reading this in the code itself.
 You will need a reasonably current installation of python, preferably just the
 standard [anaconda distribution](https://store.continuum.io/anaconda/).  If you
 install the full anaconda distribution, you won't need to install anything
-more.  Otherwise, you will have to install ipython, matplotlib, and numpy.
-
-along with
-[ipython-notebook][1] and [pylab][2].  The easiest way to install
-these is through [anaconda][4].  If you want to use the
-`MatchedFilteringWithMicrophone` notebooks, you will also need the
-[pyaudio module][3].
+more.  Otherwise, you will have to install ipython, matplotlib, and numpy.  If
+you want to use the `MatchedFilteringWithMicrophone` notebooks, you will also
+need the
+[pyaudio module](http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html),
+which can be installed by anaconda as usual with `conda install pyaudio`.
 
 Now, from the `MathchedFiltering` directory, issue the command
 ```bash
-    ipython notebook --pylab=inline MatchedFiltering.ipynb
+    ipython notebook MatchedFiltering.ipynb
 ```
 This will start an ipython session, but should switch to your default
 web browser, where you will interact with the session.
@@ -78,28 +88,12 @@ the side.
 A more preferable option may be having the students download and run the code
 themselves.  The only caveat here is that the students will need to install the
 dependencies.  With [anaconda](https://store.continuum.io/anaconda/), this is
-not a problem.  Assuming the students are capable, there are questions included in
-the notebook.  Their answers could be turned in as a homework assignment, or a
-quiz given on the material to ensure that students actually go through the
+not a problem.  Assuming the students can run it, there are questions included
+in the notebook.  Their answers could be turned in as a homework assignment, or
+a quiz given on the material to ensure that students actually go through the
 notebook.
 
 If this will be presented together in a computer lab, it is best if things are
 set up as much as possible on each computer beforehand.  The computers need to
-be using different accounts (with different home directories), or ipython will
-get screwed up and run into errors.
-
-To run the notebook, make sure [anaconda](http://continuum.io/downloads) is
-installed, then open a terminal and run the following:
-```python
-git clone --depth 1 git@github.com:moble/MatchedFiltering.git
-cd MatchedFiltering
-
-```
-
-
-
-
-[1]: http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html
-[2]: http://www.scipy.org/PyLab
-[3]: http://people.csail.mit.edu/hubert/pyaudio/
-[4]: http://continuum.io/downloads
+be using different accounts (with home directories not on a shared file
+system), or ipython will get screwed up and run into errors.
