@@ -416,11 +416,11 @@ $$<p>Discrete frequencies: $f_i$</p>
         
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Graphic_equalizer.jpg&quot;</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Graphic_equalizer.jpg&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -8517,6 +8517,7 @@ JqeGUsoUDBHU5rvjGMnaOxnKcoxtJalmO5cbcnMaggLvJqX7YjSl40KyDoxOR0xVxtzXaJV4xsmW
 iRIvmhipC8E5Oe3HpTkmAICnBHKsBtI7Y980pQipcq2JV+W73Eu4jJCvm7icnknp+FYl1E4RHAIR
 s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 "
+width=500
 >
 </div>
 
@@ -8535,7 +8536,19 @@ s7efTrWl3Ulyx2RmoqnG8t2f/9k=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>
+</div>
+</div>
+</div></section>
+    </section><section>
+    <section>
+    
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$
   {\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}}
 $$
 </div>
@@ -8549,7 +8562,7 @@ $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+$$
   \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}
 $$
 </div>
@@ -8563,7 +8576,7 @@ $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+$$
   \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
   \cos \left[ \delta\phi_{f_i} \right]
 $$
@@ -8578,7 +8591,7 @@ $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+$$
   \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
   \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
 $$
@@ -8593,7 +8606,7 @@ $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+$$
   \sum_{f_{i}} \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
   \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
 $$
@@ -8608,7 +8621,7 @@ $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Matched-filtering">Matched filtering<a class="anchor-link" href="#Matched-filtering">&#182;</a></h1>$$
+$$
   \big\langle d \big| s \big\rangle_{\delta t}
   = \sum_{f_{i}} \frac{\tilde{d}_{f_{i}}\, \tilde{s}_{f_{i}}} {\tilde{n}_{f_{i}}^{2}}\,
   \cos \left[ \delta\phi_{f_i} + f_{i}\, \delta t \right]
