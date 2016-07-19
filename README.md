@@ -52,24 +52,20 @@ git clone --depth 1 https://github.com/moble/MatchedFiltering.git
 ```
 Otherwise, you are presumably reading this in the code itself.
 
-You also need `numpy`, `scipy`, `jupyter`, a very recent (>5.0) version of `ipywidgets`, and `widgetsnbextension` installed.  The easiest way to do all this is to [install `conda`](https://www.continuum.io/downloads) and run
+You also need `ipython`, `matplotlib`, `numpy`, `scipy`, `jupyter`, a very recent (>5.0) version of `ipywidgets`, and `widgetsnbextension` installed.  The easiest way to do all this is to just [install `conda`](https://www.continuum.io/downloads) and run
 ```bash
 conda update -y --all
 conda install -c conda-forge ipywidgets widgetsnbextension
 ```
-
-You will need a reasonably current installation of python, preferably just the
-standard [anaconda distribution](https://store.continuum.io/anaconda/).  If you
-install the full anaconda distribution, you won't need to install anything
-more.  Otherwise, you will have to install ipython, matplotlib, and numpy.  If
+Otherwise, you will have to install all those components yourself.  If
 you want to use the `MatchedFilteringWithMicrophone` notebooks, you will also
 need the
 [pyaudio module](http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html),
 which can be installed by anaconda as usual with `conda install pyaudio`.
 
-Now, from the `MathchedFiltering` directory, issue the command
+Now, from the `MatchedFiltering` directory, issue the command
 ```bash
-    ipython notebook MatchedFiltering.ipynb
+    jupyter notebook MatchedFiltering.ipynb
 ```
 This will start an ipython session, but should switch to your default
 web browser, where you will interact with the session.
