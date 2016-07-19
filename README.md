@@ -2,9 +2,11 @@ Quick start
 ===========
 
   * The presentation can be found
-    [here](http://moble.github.io/MatchedFiltering/Presentation.slides.html)
+    [here](http://moble.github.io/MatchedFiltering/Presentation.slides.html).
   * A preview of the notebook can be seen
-    [here](http://nbviewer.ipython.org/github/moble/MatchedFiltering/blob/gh-pages/MatchedFiltering.ipynb)
+    [here](http://nbviewer.ipython.org/github/moble/MatchedFiltering/blob/gh-pages/MatchedFiltering.ipynb),
+    but note that there are cool interactive things that are missing
+    unless you download and run it yourself.
 
 
 Details
@@ -27,7 +29,7 @@ introduced by progressively building the formula with simple explanations for
 each term.  Discussion of these concepts is interwoven with practice using
 them.
 
-The material is presented as a Jupyter notebook -- which looks and acts
+The material is presented as a Jupyter notebook — which looks and acts
 basically like Mathematica.  The notebook includes text explaining the concepts
 and code.  This allows the explanations to be included (with latex equations)
 right among the code, and all in a live python session.  No familiarity with
@@ -52,16 +54,20 @@ git clone --depth 1 https://github.com/moble/MatchedFiltering.git
 ```
 Otherwise, you are presumably reading this in the code itself.
 
-You also need `ipython`, `matplotlib`, `numpy`, `scipy`, `jupyter`, a very recent (>5.0) version of `ipywidgets`, and `widgetsnbextension` installed.  The easiest way to do all this is to just [install `conda`](https://www.continuum.io/downloads) and run
+You also need `ipython`, `matplotlib`, `numpy`, `scipy`, `jupyter`, a
+very recent (>5.0) version of `ipywidgets`, and `widgetsnbextension`
+installed.  The easiest way to do all this is to just
+[install `conda`](https://www.continuum.io/downloads) and run
 ```bash
 conda update -y --all
 conda install -c conda-forge ipywidgets widgetsnbextension
 ```
-Otherwise, you will have to install all those components yourself.  If
-you want to use the `MatchedFilteringWithMicrophone` notebooks, you will also
-need the
+Otherwise, all of these packages can also be installed using `pip`.
+If you want to use the `MatchedFilteringWithMicrophone` notebooks, you
+will also need the
 [pyaudio module](http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html),
-which can be installed by anaconda as usual with `conda install pyaudio`.
+which can be installed by anaconda as usual with `conda install
+pyaudio`.
 
 Now, from the `MatchedFiltering` directory, issue the command
 ```bash
