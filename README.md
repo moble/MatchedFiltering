@@ -52,6 +52,12 @@ git clone --depth 1 https://github.com/moble/MatchedFiltering.git
 ```
 Otherwise, you are presumably reading this in the code itself.
 
+You also need `numpy`, `scipy`, `jupyter`, a very recent (>5.0) version of `ipywidgets`, and `widgetsnbextension` installed.  The easiest way to do all this is to [install `conda`](https://www.continuum.io/downloads) and run
+```bash
+conda update -y --all
+conda install -c conda-forge ipywidgets widgetsnbextension
+```
+
 You will need a reasonably current installation of python, preferably just the
 standard [anaconda distribution](https://store.continuum.io/anaconda/).  If you
 install the full anaconda distribution, you won't need to install anything
