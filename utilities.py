@@ -122,8 +122,12 @@ def add_notch_filter(notch_filters, gap_filler):
                                widgets.Checkbox(description='Use filter', value=True)])
     notch_filters.children += (new_filter,)
 
-    
-def filter_cheat(frequency_bin_upper_ends, sliders, notch_filters, gap_filler, cheat_sliders=True, cheat_notches=True):
+
+def filter_cheat(global_values, cheat_sliders=True, cheat_notches=True):
+    frequency_bin_upper_ends = global_values['frequency_bin_upper_ends']
+    sliders = global_values['sliders']
+    notch_filters = global_values['notch_filters']
+    gap_filler = global_values['gap_filler']
     if cheat_sliders:
         for f,s in zip(frequency_bin_upper_ends, sliders):
             if f<63 or f>257:
@@ -133,7 +137,7 @@ def filter_cheat(frequency_bin_upper_ends, sliders, notch_filters, gap_filler, c
                                                      widgets.FloatText(value=b, description='End', width='150px'),
                                                      gap_filler,
                                                      widgets.Checkbox(description='Use filter', value=True)])
-                                       for e,b in [(59.8, 60.2), (119.5, 120.5), (179.0, 181.0), (299., 304.), (331.4, 334.0)])
+                                       for e,b in [(59.6, 60.4), (119.5, 120.5), (179.0, 181.0), (299., 304.), (331.4, 334.0)])
 
 
 def notch_data(h, sampling_rate, notch_locations_and_sizes):
@@ -166,3 +170,103 @@ def bandpass(signal, sampling_rate, lower_end=20.0, upper_end=300.0):
     nyquist_frequency = sampling_rate/2.0
     bb, ab = butter(4, [lower_end/nyquist_frequency, upper_end/nyquist_frequency], btype='band')
     return filtfilt(bb, ab, signal)
+
+
+def derivative(f, t):
+    """Fourth-order finite-differencing with non-uniform time steps
+
+    The formula for this finite difference comes from Eq. (A 5b) of "Derivative formulas and errors for non-uniformly
+    spaced points" by M. K. Bowen and Ronald Smith.  As explained in their Eqs. (B 9b) and (B 10b), this is a
+    fourth-order formula -- though that's a squishy concept with non-uniform time steps.
+
+    TODO: If there are fewer than five points, the function should revert to simpler (lower-order) formulas.
+    
+    Note that this version is very slow, because the loops are iterated by python.  I usually prefer to wrap this
+    function in numba.njit, but I don't want to add that as a dependence of this project just for this function.
+
+    """
+    dfdt = np.empty_like(f)
+
+    for i in range(2):
+        t_i = t[i]
+        t1 = t[0]
+        t2 = t[1]
+        t3 = t[2]
+        t4 = t[3]
+        t5 = t[4]
+        h1 = t1 - t_i
+        h2 = t2 - t_i
+        h3 = t3 - t_i
+        h4 = t4 - t_i
+        h5 = t5 - t_i
+        h12 = t1 - t2
+        h13 = t1 - t3
+        h14 = t1 - t4
+        h15 = t1 - t5
+        h23 = t2 - t3
+        h24 = t2 - t4
+        h25 = t2 - t5
+        h34 = t3 - t4
+        h35 = t3 - t5
+        h45 = t4 - t5
+        dfdt[i] = (-((h2 * h3 * h4 + h2 * h3 * h5 + h2 * h4 * h5 + h3 * h4 * h5) / (h12 * h13 * h14 * h15)) * f[0]
+                   + ((h1 * h3 * h4 + h1 * h3 * h5 + h1 * h4 * h5 + h3 * h4 * h5) / (h12 * h23 * h24 * h25)) * f[1]
+                   - ((h1 * h2 * h4 + h1 * h2 * h5 + h1 * h4 * h5 + h2 * h4 * h5) / (h13 * h23 * h34 * h35)) * f[2]
+                   + ((h1 * h2 * h3 + h1 * h2 * h5 + h1 * h3 * h5 + h2 * h3 * h5) / (h14 * h24 * h34 * h45)) * f[3]
+                   - ((h1 * h2 * h3 + h1 * h2 * h4 + h1 * h3 * h4 + h2 * h3 * h4) / (h15 * h25 * h35 * h45)) * f[4])
+
+    for i in range(2, len(t) - 2):
+        t1 = t[i - 2]
+        t2 = t[i - 1]
+        t3 = t[i]
+        t4 = t[i + 1]
+        t5 = t[i + 2]
+        h1 = t1 - t3
+        h2 = t2 - t3
+        h4 = t4 - t3
+        h5 = t5 - t3
+        h12 = t1 - t2
+        h13 = t1 - t3
+        h14 = t1 - t4
+        h15 = t1 - t5
+        h23 = t2 - t3
+        h24 = t2 - t4
+        h25 = t2 - t5
+        h34 = t3 - t4
+        h35 = t3 - t5
+        h45 = t4 - t5
+        dfdt[i] = (-((h2 * h4 * h5) / (h12 * h13 * h14 * h15)) * f[i - 2]
+                   + ((h1 * h4 * h5) / (h12 * h23 * h24 * h25)) * f[i - 1]
+                   - ((h1 * h2 * h4 + h1 * h2 * h5 + h1 * h4 * h5 + h2 * h4 * h5) / (h13 * h23 * h34 * h35)) * f[i]
+                   + ((h1 * h2 * h5) / (h14 * h24 * h34 * h45)) * f[i + 1]
+                   - ((h1 * h2 * h4) / (h15 * h25 * h35 * h45)) * f[i + 2])
+
+    for i in range(len(t) - 2, len(t)):
+        t_i = t[i]
+        t1 = t[-5]
+        t2 = t[-4]
+        t3 = t[-3]
+        t4 = t[-2]
+        t5 = t[-1]
+        h1 = t1 - t_i
+        h2 = t2 - t_i
+        h3 = t3 - t_i
+        h4 = t4 - t_i
+        h5 = t5 - t_i
+        h12 = t1 - t2
+        h13 = t1 - t3
+        h14 = t1 - t4
+        h15 = t1 - t5
+        h23 = t2 - t3
+        h24 = t2 - t4
+        h25 = t2 - t5
+        h34 = t3 - t4
+        h35 = t3 - t5
+        h45 = t4 - t5
+        dfdt[i] = (-((h2 * h3 * h4 + h2 * h3 * h5 + h2 * h4 * h5 + h3 * h4 * h5) / (h12 * h13 * h14 * h15)) * f[-5]
+                   + ((h1 * h3 * h4 + h1 * h3 * h5 + h1 * h4 * h5 + h3 * h4 * h5) / (h12 * h23 * h24 * h25)) * f[-4]
+                   - ((h1 * h2 * h4 + h1 * h2 * h5 + h1 * h4 * h5 + h2 * h4 * h5) / (h13 * h23 * h34 * h35)) * f[-3]
+                   + ((h1 * h2 * h3 + h1 * h2 * h5 + h1 * h3 * h5 + h2 * h3 * h5) / (h14 * h24 * h34 * h45)) * f[-2]
+                   - ((h1 * h2 * h3 + h1 * h2 * h4 + h1 * h3 * h4 + h2 * h3 * h4) / (h15 * h25 * h35 * h45)) * f[-1])
+
+    return dfdt
