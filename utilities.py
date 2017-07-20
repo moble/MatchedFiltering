@@ -59,7 +59,7 @@ def filter_and_plot(h, t, htilde, sampling_rate, sliders, notch_filters, use_equ
         for i, f in enumerate(frequency_bin_upper_ends):
             if i==0:
                 f_last = 0.0
-            levels[(frequencies >= f_last) & (frequencies < f)] = 10**slider_values[i]
+            levels[(frequencies >= f_last) & (frequencies < f)] = 10**(slider_values[i]/20.0)
             f_last = f
 
     # Get notch filters (if any)
@@ -131,7 +131,7 @@ def filter_cheat(global_values, cheat_sliders=True, cheat_notches=True):
     if cheat_sliders:
         for f,s in zip(frequency_bin_upper_ends, sliders):
             if f<63 or f>257:
-                s.value = -15.0
+                s.value = -200.0
     if cheat_notches:
         notch_filters.children = tuple(widgets.HBox([widgets.FloatText(value=e, description='Begin', width='150px'),
                                                      widgets.FloatText(value=b, description='End', width='150px'),
@@ -155,14 +155,18 @@ def notch_data(h, sampling_rate, notch_locations_and_sizes):
     return h_filtered
 
 
-def whiten(signal, sampling_rate):
+def whiten(signal, sampling_rate, return_tilde=False):
     from numpy.fft import rfft, irfft, rfftfreq
     from scipy.signal import welch
     from scipy.interpolate import InterpolatedUnivariateSpline
     f_psd, psd = scipy.signal.welch(signal, sampling_rate, nperseg=2**int(np.log2(len(signal)/8.0)), scaling='density')
     f_signal = rfftfreq(len(signal), 1./sampling_rate)
     psd = np.abs(InterpolatedUnivariateSpline(f_psd, psd)(f_signal))
-    return irfft(rfft(signal) / np.sqrt(0.5 * sampling_rate * psd))
+    signal_filtered_tilde = rfft(signal) / np.sqrt(0.5 * sampling_rate * psd)
+    if return_tilde:
+        return irfft(signal_filtered_tilde), signal_filtered_tilde
+    else:
+        return irfft(signal_filtered_tilde)
 
 
 def bandpass(signal, sampling_rate, lower_end=20.0, upper_end=300.0):
