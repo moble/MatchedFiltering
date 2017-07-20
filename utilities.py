@@ -274,3 +274,22 @@ def derivative(f, t):
                    - ((h1 * h2 * h3 + h1 * h2 * h4 + h1 * h3 * h4 + h2 * h3 * h4) / (h15 * h25 * h35 * h45)) * f[-1])
 
     return dfdt
+
+
+def retrieve_new_data(size):
+    import socket
+    import numpy as np
+    import h5py
+    host = socket.gethostname()
+    datasets = [['Data/H-H1_LOSC_4_V1-1126259446-32.hdf5', 'Data/L-L1_LOSC_4_V1-1126259446-32.hdf5'],
+                ['Data/H-H1_LOSC_4_V1-1128678884-32.hdf5', 'Data/L-L1_LOSC_4_V1-1128678884-32.hdf5'],
+                ['Data/H-H1_LOSC_4_V1-1135136334-32.hdf5', 'Data/L-L1_LOSC_4_V1-1135136334-32.hdf5'],
+                ['Data/H-H1_LOSC_4_V1-1167559920-32.hdf5', 'Data/L-L1_LOSC_4_V1-1167559920-32.hdf5']]
+    np.random.seed(np.uint32(hash(host)))
+    dataset = datasets[np.random.choice([0, 1, 2, 3])]
+    offset = np.random.randint(size)
+    with h5py.File(dataset[0]) as f:
+        h = np.roll(f['strain/Strain'][:], offset)
+    with h5py.File(dataset[1]) as f:
+        l = np.roll(f['strain/Strain'][:], offset)
+    return h, l
