@@ -47,10 +47,7 @@ def fade(signal, fade_length=0.075):
 
 
 def filter_and_plot(h, t, htilde, sampling_rate, sliders, notch_filters, use_equalizer, frequencies, frequency_bin_upper_ends, hide_original_time_domain):
-    from IPython.display import display, clear_output, Audio
-
-    # Once new output is available, clear the old output
-    clear_output(wait=True)
+    from IPython.display import display, Audio
 
     # Get levels from sliders
     levels = np.ones_like(frequencies)
