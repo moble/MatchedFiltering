@@ -1,0 +1,10 @@
+name: matched_filtering_demo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scipy
+  - h5py
+  - matplotlib
+  - ipywidgets
