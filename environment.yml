@@ -1,0 +1,13 @@
+name: gw_matched_filtering_demo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scipy
+  - h5py
+  - matplotlib
+  - rise  # For presentations from Jupyter notebooks
+  - ipywidgets  # For interactive sliders and such
+  - widgetsnbextension
+  - nodejs  # For widgets with jupyterlab
