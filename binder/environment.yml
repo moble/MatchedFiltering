@@ -1,4 +1,4 @@
-name: matched_filtering_demo
+name: gw_matched_filtering_demo
 channels:
   - conda-forge
   - defaults
@@ -8,3 +8,4 @@ dependencies:
   - h5py
   - matplotlib
   - ipywidgets
+  - rise
