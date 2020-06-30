@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+"""Download and run the GW matched-filtering demo
+
+This demonstration is a part of the REU summer program at Cornell
+University's Astronomy Department.  It mainly consists of a Jupyter
+notebook running some Python code, which includes audio demonstrations
+and interactive features.
+
+To run the code, install Python through the Anaconda
+<https://www.anaconda.com/products/individual>, open a command prompt
+(aka, terminal, shell, command line), and run these commands:
+
+    conda env create moble/gw_matched_filtering_demo
+    conda activate gw_matched_filtering_demo
+    gw_matched_filtering_demo
+
+"""
+
+import os
+import tempfile
+from urllib.request import urlopen
+from io import BytesIO
+from contextlib import ExitStack
+from zipfile import ZipFile
+from notebook.notebookapp import main as jupyter_notebook
+
+
+username = 'moble'
+repo = 'MatchedFiltering'
+branch = 'binder'
+notebook_path = 'MatchedFiltering.ipynb'
+
+
+def download(username, repo, branch):
+    print("Downloading repository")
+    repo_url = 'https://github.com/{0}/{1}/archive/{2}.zip'.format(username, repo, branch)
+    with urlopen(repo_url) as response:
+        archive_bytes = BytesIO(response.read())
+    return archive_bytes
+
+
+def unzip(zip_bytes, directory=None):
+    with ZipFile(zip_bytes) as zip_file:
+        zip_file.extractall(directory)
+
+
+def run(notebook_path):
+    print("Starting the Jupyter notebook")
+    jupyter_notebook([notebook_path, '--NotebookApp.shutdown_no_activity_timeout=1'])
+
+
+if __name__ == '__main__':
+    print("Running gravitational-wave matched-filtering demo")
+
+    # Use this to ensure the temporary directory gets removed if it gets created
+    with ExitStack() as exit_stack:
+
+        # Download
+        try:
+            archive_bytes = download(username, repo, branch)
+        except:
+            print("Failed to download the repository\n")
+            raise
+
+        # Unzip
+        try:
+            print("Trying to unzip in the current directory first")
+            unzip(zip_bytes)
+            os.chdir('{0}-{1}'.format(repo, branch))
+        except:
+            print("Failed when trying to unzip in the current directory; trying again with a temporary directory")
+            try:
+                tmpdir = exit_stack.enter_context(tempfile.TemporaryDirectory())
+                unzip(zip_bytes, directory=tmpdir.name)
+                os.chdir(os.path.join(tmpdir.name, '{0}-{1}'.format(repo, branch)))
+            except:
+                print("Failed to unzip in a temporary directory\n")
+                raise
+
+        # Run the notebook
+        run(notebook_path)
