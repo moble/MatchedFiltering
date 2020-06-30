@@ -26,46 +26,32 @@ played by the computer), and progressing to Fourier transforms of noise and grav
 signals.  The matched filter is then introduced by progressively building the formula with simple
 explanations for each term.  Discussion of these concepts is interwoven with practice using them.
 
-The material is presented as a Jupyter notebook — which looks and acts basically like Mathematica.
-The notebook includes text explaining the concepts and code.  This allows the explanations to be
-included (with latex equations) right among the code, and all in a live python session.  No
-familiarity with python is necessary for the student, though the computer will need to be set up by
-someone with good technical skills.
-
-A second notebook is also included for more demonstrations of the Fourier transform.  This notebook
-makes it easy to record a sound — tuning forks, musical instruments, or whatever the student is
-curious about — and look at its Fourier transform.  This encourages the student to play with the
-ideas a little, experimenting to gain understanding.
+The material is presented as a Jupyter notebook — which is an interactive python session, and
+includes text explaining the concepts and code.  This allows the explanations to be included (with
+LaTeX equations) right among the code, and all in a live, interactive python session.  No
+familiarity with python is necessary for the student, though the setup may require some basic
+skills.
 
 
 
 To run the code
 ===============
 
-If you are reading this README from the github project page, you should first download the package
-to your own computer with something like
-```bash
-git clone --depth 1 https://github.com/moble/MatchedFiltering.git
-```
-Otherwise, you are presumably reading this in the code itself.
+If you are familiar with python packaging, you can probably figure out how to run this on your own.
+Note that the required packages include ipython, jupyter, notebook, scipy, matplotlib, ipywidgets,
+and widgetsnbextension.
 
-You also need `ipython`, `matplotlib`, `numpy`, `scipy`, `h5py`, `jupyter`, a very recent (>5.0)
-version of `ipywidgets`, and `widgetsnbextension` installed.  The easiest way to do all this is to
-just [install `conda`](https://www.continuum.io/downloads) and run
+It is much simpler to just use the [anaconda](https://www.anaconda.com/) python ecosystem.  Once
+anaconda is installed, just run the following at the command prompt:
 
 ```bash
-conda update -c conda-forge -y --all
-conda install -c conda-forge ipython jupyter notebook scipy matplotlib ipywidgets widgetsnbextension
+conda env create moble/gw_matched_filtering_demo
+conda activate gw_matched_filtering_demo
+gw_matched_filtering_demo
 ```
-Otherwise, all of these packages can also be installed using `pip`.
 
-Now, from the `MatchedFiltering` directory, issue the command
-```bash
-    jupyter notebook MatchedFiltering.ipynb
-```
-This will start an ipython session, but should switch to your default web browser, where you will
-interact with the session.
-
+This will install all the requirements into a new conda environment, switch to that environment,
+then download and run the notebook.
 
 
 Notes for classroom use
@@ -81,10 +67,10 @@ it would be best to go slowly and ask lots of questions of the students, possibl
 student to actually run the commands while the teacher engages from off to the side.
 
 A preferable option may be having the students download and run the code themselves.  The only
-caveat here is that the students will need to install the dependencies.
-With [anaconda](https://store.continuum.io/anaconda/), this is not a problem.  Assuming the students
-can run it, there are questions included in the notebook.  Their answers could be turned in as a
-homework assignment, or a quiz given on the material to ensure that students actually go through the
+caveat here is that the students will need to install the dependencies.  With
+[anaconda](https://www.anaconda.com/), this is not a problem.  Assuming the students can run it,
+there are questions included in the notebook.  Their answers could be turned in as a homework
+assignment, or a quiz given on the material to ensure that students actually go through the
 notebook.
 
 If this will be presented together in a computer lab, it is best if things are set up as much as
