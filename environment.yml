@@ -10,4 +10,5 @@ dependencies:
   - rise  # For presentations from Jupyter notebooks
   - ipywidgets  # For interactive sliders and such
   - widgetsnbextension
+  - jupyter_contrib_nbextensions
   - nodejs  # For widgets with jupyterlab
