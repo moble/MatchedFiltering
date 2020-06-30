@@ -12,3 +12,6 @@ dependencies:
   - widgetsnbextension
   - jupyter_contrib_nbextensions
   - nodejs  # For widgets with jupyterlab
+  - pip
+  - pip:
+    - gw-matched-filtering-demo
