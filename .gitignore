@@ -1,3 +1,6 @@
 Sounds/EqualMass*wav
 SearchData
+dist
+gw_matched_filtering_demo.egg-info
+.projectignore
 *pyc
