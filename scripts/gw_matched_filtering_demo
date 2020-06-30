@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         # Download
         try:
-            archive_bytes = download(username, repo, branch)
+            zip_bytes = download(username, repo, branch)
         except:
             print("Failed to download the repository\n")
             raise
