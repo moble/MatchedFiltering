@@ -285,9 +285,9 @@ def retrieve_new_data(size):
     np.random.seed(np.uint32(hash(host)))
     dataset = datasets[np.random.choice([0, 1, 2, 3])]
     offset = np.random.randint(-size//64, size//64)
-    with h5py.File(dataset[0]) as f:
+    with h5py.File(dataset[0], 'r') as f:
         h = np.roll(f['strain/Strain'][:], offset)
-    with h5py.File(dataset[1]) as f:
+    with h5py.File(dataset[1], 'r') as f:
         l = np.roll(f['strain/Strain'][:], offset)
     return h, l
 
