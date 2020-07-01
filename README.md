@@ -1,12 +1,10 @@
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?filepath=MatchedFiltering.ipynb)
+
+
 Quick start
 ===========
 
-  * The presentation can be found
-    [here](http://moble.github.io/MatchedFiltering/Presentation.slides.html).
-  * A preview of the notebook can be seen
-    [here](http://nbviewer.ipython.org/github/moble/MatchedFiltering/blob/gh-pages/MatchedFiltering.ipynb),
-    but note that there are cool interactive things that are missing
-    unless you download and run it yourself.
+  * Click the Binder button above to open a live version of the main notebook
 
 
 Details
