@@ -4,7 +4,18 @@
 Quick start
 ===========
 
-  * Click the Binder button above to open a live version of the main notebook
+Click the Binder button above to open a live version of the main notebook run in the cloud.
+
+Alternatively, you can run the notebook on your own computer if you have
+[anaconda](https://www.anaconda.com/) installed.  Just run these commands:
+
+```bash
+conda env create moble/gw_matched_filtering_demo
+conda activate gw_matched_filtering_demo
+gw_matched_filtering_demo
+```
+
+This will download and install all the necessary files, then open the notebook in your browser.
 
 
 Details
