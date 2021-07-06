@@ -85,3 +85,10 @@ notebook.
 If this will be presented together in a computer lab, it is best if things are set up as much as
 possible on each computer beforehand.  The computers need to be using different accounts (with home
 directories not on a shared file system), or ipython will get screwed up and run into errors.
+
+Cool video
+==========
+A student in one workshop pointed out [this TED Talk by the astronomer Wanda Díaz-Merced](https://www.ted.com/talks/wanda_diaz_merced_how_a_blind_astronomer_found_a_way_to_hear_the_stars)
+who lost her sight, and now interacts with data by turning it into sound.  Though she uses very
+different techniques from the ones we use for LIGO data, this is a very powerful example of
+the importance of exploring data in different ways.
