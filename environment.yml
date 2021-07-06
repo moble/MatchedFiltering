@@ -5,13 +5,10 @@ channels:
 dependencies:
   - numpy
   - scipy
-  - h5py
+  - h5py >=3.3.0
   - matplotlib
   - rise  # For presentations from Jupyter notebooks
   - ipywidgets  # For interactive sliders and such
-  - widgetsnbextension
-  - jupyter_contrib_nbextensions
-  - nodejs  # For widgets with jupyterlab
   - pip
   - pip:
     - gw-matched-filtering-demo
