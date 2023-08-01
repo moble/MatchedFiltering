@@ -3,7 +3,7 @@
 [lite-badge]: https://jupyterlite.rtfd.io/en/latest/_static/badge.svg
 [lite]: https://moble.github.io/MatchedFiltering/
 [binder-badge]: https://mybinder.org/badge_logo.svg
-[binder]: https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?filepath=content/MatchedFiltering.ipynb&urlpath=lab
+[binder]: https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?urlpath=lab/tree/content
 
 
 Quick start
@@ -43,7 +43,9 @@ The material is presented as a Jupyter notebook — which is an interactive pyth
 includes text explaining the concepts and code.  This allows the explanations to be included (with
 LaTeX equations) right among the code, and all in a live, interactive python session.  No
 familiarity with python is necessary for the student, though the setup may require some basic
-skills.
+skills.  A presentation that introduces and motivates the material is in the root directory, and can
+be [viewed on Binder
+here](https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?filepath=Presentation.ipynb).
 
 
 To run the code
