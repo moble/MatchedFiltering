@@ -29,7 +29,7 @@ from notebook.notebookapp import main as jupyter_notebook
 username = 'moble'
 repo = 'MatchedFiltering'
 branch = 'binder'
-notebook_path = 'MatchedFiltering.ipynb'
+notebook_path = 'content/MatchedFiltering.ipynb'
 
 
 def download(username, repo, branch):
