@@ -1,21 +1,25 @@
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?filepath=MatchedFiltering.ipynb)
+[![lite-badge]][lite] [![binder-badge]][binder]
+
+[lite-badge]: https://jupyterlite.rtfd.io/en/latest/_static/badge.svg
+[lite]: https://moble.github.io/MatchedFiltering/
+[binder-badge]: https://mybinder.org/badge_logo.svg
+[binder]: https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?filepath=content/MatchedFiltering.ipynb&urlpath=lab
 
 
 Quick start
 ===========
 
-Click the Binder button above to open a live version of the main notebook run in the cloud.
+There are several quick and easy options:
 
-Alternatively, you can run the notebook on your own computer if you have
-[anaconda](https://www.anaconda.com/) installed.  Just run these commands:
-
-```bash
-conda env create moble/gw_matched_filtering_demo
-conda activate gw_matched_filtering_demo
-gw_matched_filtering_demo
-```
-
-This will download and install all the necessary files, then open the notebook in your browser.
+  * Click the ["lite now" button][lite] above to open a live version of the main notebook that runs in your browser.
+  * Click the ["Binder" button][binder] above to open a live version of the main notebook that runs in the cloud.
+  * Run the notebook on your own computer if you have [anaconda](https://www.anaconda.com/) installed.  Just run these commands:
+    ```bash
+    conda env create moble/gw_matched_filtering_demo
+    conda activate gw_matched_filtering_demo
+    gw_matched_filtering_demo
+    ```
+    This will download and install all the necessary files, then open the notebook in your browser.
 
 
 Details
@@ -40,7 +44,6 @@ includes text explaining the concepts and code.  This allows the explanations to
 LaTeX equations) right among the code, and all in a live, interactive python session.  No
 familiarity with python is necessary for the student, though the setup may require some basic
 skills.
-
 
 
 To run the code
@@ -85,6 +88,7 @@ notebook.
 If this will be presented together in a computer lab, it is best if things are set up as much as
 possible on each computer beforehand.  The computers need to be using different accounts (with home
 directories not on a shared file system), or ipython will get screwed up and run into errors.
+
 
 Cool video
 ==========
