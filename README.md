@@ -19,11 +19,11 @@ There are several quick and easy options:
   * Click the ["lite now" button][lite] above to open a live version of the main notebook that runs in your browser.
     
     This may not work with certain browser configurations — especially mobile browsers.
-  * Run the notebook on your own computer if you have [anaconda](https://www.anaconda.com/) installed.  Just run these commands:
+  * Run the notebook on your own computer if you have [anaconda](https://www.anaconda.com/)
+    installed.  Download the file `content/MatchedFiltering.ipynb` and run these commands:
     ```bash
-    conda env create moble/gw_matched_filtering_demo
-    conda activate gw_matched_filtering_demo
-    gw_matched_filtering_demo
+    conda install -c conda-forge numpy scipy h5py matplotlib ipywidgets jupyterlab
+    jupyter lab MatchedFiltering.ipynb
     ```
     This will download and install all the necessary files, then open the notebook in your browser.
 
