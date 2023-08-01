@@ -121,8 +121,7 @@ def add_notch_filter(notch_filters, gap_filler):
     notch_filters.children += (new_filter,)
 
 
-def filter_cheat():
-    global_values = globals()
+def filter_cheat(global_values):
     frequency_bin_upper_ends = global_values['frequency_bin_upper_ends']
     sliders = global_values['equalizer_sliders']
     notch_filters = global_values['notch_filter_list']
