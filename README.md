@@ -1,9 +1,9 @@
-[![lite-badge]][lite] [![binder-badge]][binder]
+[![binder-badge]][binder] [![lite-badge]][lite]
 
-[lite-badge]: https://jupyterlite.rtfd.io/en/latest/_static/badge.svg
-[lite]: https://moble.github.io/MatchedFiltering/
 [binder-badge]: https://mybinder.org/badge_logo.svg
 [binder]: https://mybinder.org/v2/gh/moble/MatchedFiltering/binder?urlpath=lab/tree/content
+[lite-badge]: https://jupyterlite.rtfd.io/en/latest/_static/badge.svg
+[lite]: https://moble.github.io/MatchedFiltering/
 
 
 Quick start
@@ -11,8 +11,14 @@ Quick start
 
 There are several quick and easy options:
 
+  * Click the ["binder" button][binder] above to open a live version of the main notebook that runs in the cloud.
+    
+    This may not work if the Binder service is too busy at the moment, and it will kill your session
+    if you don't run any commands for a few minutes.  But if it is available, this will work in any
+    modern browser.
   * Click the ["lite now" button][lite] above to open a live version of the main notebook that runs in your browser.
-  * Click the ["Binder" button][binder] above to open a live version of the main notebook that runs in the cloud.
+    
+    This may not work with certain browser configurations — especially mobile browsers.
   * Run the notebook on your own computer if you have [anaconda](https://www.anaconda.com/) installed.  Just run these commands:
     ```bash
     conda env create moble/gw_matched_filtering_demo
