@@ -136,7 +136,7 @@ def filter_cheat(global_values):
                 widgets.Checkbox(description="Use this filter", value=True)
             ], layout={"justify_content": "space-around"}
         )
-        for b,e in [(58.1, 60.5), (119.6, 120.1), (179.0, 181.2), (299., 304.), (331.4, 334.0)]
+        for b,e in [(58.1, 60.5), (119.6, 120.1), (179.0, 181.2)]
     )
 
 
