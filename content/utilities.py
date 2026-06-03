@@ -281,11 +281,17 @@ def retrieve_new_data(size):
     import numpy as np
     import h5py
     host = socket.gethostname()
-    datasets = [['Data/H-H1_LOSC_4_V1-1126259446-32.hdf5', 'Data/L-L1_LOSC_4_V1-1126259446-32.hdf5'],
-                ['Data/H-H1_LOSC_4_V1-1128678884-32.hdf5', 'Data/L-L1_LOSC_4_V1-1128678884-32.hdf5'],
-                ['Data/H-H1_LOSC_4_V1-1135136334-32.hdf5', 'Data/L-L1_LOSC_4_V1-1135136334-32.hdf5'],
-                ['Data/H-H1_LOSC_4_V1-1167559920-32.hdf5', 'Data/L-L1_LOSC_4_V1-1167559920-32.hdf5']]
-    np.random.seed(np.uint32(hash(host)))
+    datasets = [['data/H-H1_LOSC_4_V1-1126259446-32.hdf5', 'data/L-L1_LOSC_4_V1-1126259446-32.hdf5'],
+                ['data/H-H1_LOSC_4_V1-1128678884-32.hdf5', 'data/L-L1_LOSC_4_V1-1128678884-32.hdf5'],
+                ['data/H-H1_LOSC_4_V1-1135136334-32.hdf5', 'data/L-L1_LOSC_4_V1-1135136334-32.hdf5'],
+                ['data/H-H1_LOSC_4_V1-1167559920-32.hdf5', 'data/L-L1_LOSC_4_V1-1167559920-32.hdf5']]
+    
+    new_seed = np.abs(int(hash(host)))
+
+    while new_seed > 2**32 - 1:
+        new_seed //= 2
+
+    np.random.seed(new_seed)
     dataset = datasets[np.random.choice([0, 1, 2, 3])]
     offset = np.random.randint(-size//64, size//64)
     with h5py.File(dataset[0], 'r') as f:
