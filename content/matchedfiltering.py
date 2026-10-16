@@ -61,7 +61,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    This is a [Jupyter notebook](https://jupyter.org/) (formerly known as an [IPython notebook](http://ipython.org/notebook.html)).  It's connected to an actual python session, but it runs through a web browser, so we can format things nicely and give some explanations, and so you don't have to copy-and-paste all the instructions into a normal python session.  Plus, you can edit the code and explore the data interactively.  It's meant to look and work kind of like Mathematica, if you've ever used that before.  (And if you don't care for python, Jupyter also handles [Julia](http://nbviewer.ipython.org/url/jdj.mit.edu/~stevenj/IJulia%20Preview.ipynb), [R](https://github.com/IRkernel/IRkernel), [IDL](https://github.com/lstagner/idl_kernel), and numerous other languages.)
+    This is a [marimo notebook](https://marimo.io/).  It's connected to an actual python session, but it runs through a web browser, so we can format things nicely and give some explanations, and so you don't have to copy-and-paste all the instructions into a normal python session.  Plus, you can edit the code and explore the data interactively.  It's meant to look and work kind of like Mathematica, if you've ever used that before.
 
     Each of the sections in gray with something like "`In[1]:`" in front of it is called a *cell* and contains code for you to run.  Run the code by placing your cursor in the cell, then pressing Shift+Enter.
 
@@ -96,10 +96,6 @@ def _():
     import scipy.signal
     from scipy.interpolate import InterpolatedUnivariateSpline
 
-    # These are some nice interactive things we'll use in this notebook
-    #from IPython.display import display, Audio, Latex, clear_output
-    #import ipywidgets as widgets
-
     # These are some messy functions I've defined in another file (`utilities.py`)
     import time 
 
@@ -119,7 +115,7 @@ def _():
 
     sys.path.append(public_dir)
 
-    from utilities import (fade, derivative, plot_td_and_fd, plot_td_and_fd_edit, filter_and_plot, filter_and_plot_edit, 
+    from utilities import (fade, derivative, plot_td_and_fd_edit, filter_and_plot_edit, 
                             add_notch_filter, filter_cheat, notch_data, bandpass, retrieve_new_data)
 
 
@@ -1255,125 +1251,6 @@ def _(mo):
     )
     return
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        r"""
-    # 8. More detections!
-
-    Since the first detection, there have been several other detections and "triggers".  A "trigger" is what LIGO calls an event that initially looks like a detection, but has not been evaluated in enough detail for them to be confident that it actually is an astrophysical phenomenon.
-
-    You have been given some data of your own, containing data very similar to one of the four events that LIGO has identified so far.  Your job is to find out which one.  To make things a little easier on you, we first condense all of the fancy filtering and matching done above into a single function:
-    """
-    )
-    return
-
-
-@app.cell
-def _(Latex, display, dt, fade, h5py, np, plt, sampling_rate, scipy, t):
-    def show_matches(h, l, nr, phase_offset=0.0):
-
-        if isinstance(h, str):
-            with h5py.File(h) as f:
-                h = f['strain/Strain'][:]
-        htilde = dt * np.fft.rfft(h)
-        h_filtered = filter_signal(h, sampling_rate, upper_bandpass_frequency=512.0)
-        h_filtered_tilde = dt * np.fft.rfft(h_filtered)
-
-        if isinstance(l, str):
-            with h5py.File(l) as f:
-                l = f['strain/Strain'][:]
-        ltilde = dt * np.fft.rfft(l)
-        l_filtered = filter_signal(l, sampling_rate, upper_bandpass_frequency=512.0)
-        l_filtered_tilde = dt * np.fft.rfft(l_filtered)
-
-        if isinstance(nr, str):
-            with h5py.File(nr) as f:
-                nr = fade((np.exp(phase_offset) * (f['template'][0][:] + 1j*f['template'][1][:])).real)
-        nrtilde = dt * np.fft.rfft(nr)
-        nr_filtered_h = filter_signal(nr, sampling_rate, upper_bandpass_frequency=512.0, noisy_signal=h)
-        nr_filtered_h_tilde = dt * np.fft.rfft(nr_filtered_h)
-        nr_filtered_l = filter_signal(nr, sampling_rate, upper_bandpass_frequency=512.0, noisy_signal=l)
-        nr_filtered_l_tilde = dt * np.fft.rfft(nr_filtered_l)
-
-        match_h = np.fft.irfft(h_filtered_tilde * nr_filtered_h_tilde.conjugate())
-        match_l = np.fft.irfft(l_filtered_tilde * nr_filtered_l_tilde.conjugate())
-
-        optimal_offset_l = np.argmax(abs(match_l))
-        optimal_offset_h = np.argmax(abs(match_h))
-
-        print("Index of the optimal Livingston offset:", optimal_offset_l)
-        print("Index of the optimal Hanford offset:   ", optimal_offset_h)
-
-        # Add small time offsets to the filtered detector data, to align the measured data to the model.
-        # (These precise offsets will be derived below.)
-        l_correlation = np.roll(l_filtered, -optimal_offset_l) * nr_filtered_l
-        h_correlation = np.roll(h_filtered, -optimal_offset_h) * nr_filtered_h
-
-        # Integrate the correlation functions over time
-        c_l = scipy.integrate.simps(l_correlation, t)
-        c_h = scipy.integrate.simps(h_correlation, t)
-        display(Latex(r'$c_{{\mathrm{{Livingston}}}} = {0:.4f}$'.format(c_l)))
-        display(Latex(r'$c_{{\mathrm{{Hanford}}}} = {0:.4f}$'.format(c_h)))
-
-        # Plot the correlation functions as functions of time
-        plt.close()
-        plt.figure()
-        plt.plot(t, np.sign(c_l)*l_correlation, label='Livingston')
-        plt.plot(t, np.sign(c_h)*h_correlation, label='Hanford')
-        plt.grid()
-        plt.xlim(15.75, 16.1)
-        plt.xlabel('Time (seconds)')
-        plt.ylabel('Correlation between data and simulated signal')
-        plt.legend()
-        plt.show();
-
-
-    # You can use that function for any of the three events (or one trigger) with function calls like these:
-    #show_matches('data/H-H1_LOSC_4_V1-1126259446-32.hdf5', 'data/L-L1_LOSC_4_V1-1126259446-32.hdf5', 'data/GW150914_4_template.hdf5', 0.75j*np.pi)
-    #show_matches('data/H-H1_LOSC_4_V1-1128678884-32.hdf5', 'data/L-L1_LOSC_4_V1-1128678884-32.hdf5', 'data/LVT151012_4_template.hdf5', 0.024j*np.pi)
-    #show_matches('data/H-H1_LOSC_4_V1-1135136334-32.hdf5', 'data/L-L1_LOSC_4_V1-1135136334-32.hdf5', 'data/GW151226_4_template.hdf5', 0.0)
-    #show_matches('data/H-H1_LOSC_4_V1-1167559920-32.hdf5', 'data/L-L1_LOSC_4_V1-1167559920-32.hdf5', 'data/GW170104_4_template.hdf5', 0.08j*np.pi)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""Now, retrieve your data:""")
-    return
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""Figure out which of the four events best matches your data, and how it's not quite the same as the original LIGO event.""")
-    return
-
-
-@app.cell
-def _():
-    #your code goes here ...
-    return
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell
-def _():
-    return
 
 
 if __name__ == "__main__":
