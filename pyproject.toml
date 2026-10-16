@@ -3,6 +3,7 @@
 # version.  This isn't actually a project, and we're not tracking the
 # project's version.
 [project]
+name = "plots.matched-filtering.org"
 version = "1.0.0"
 requires-python = ">=3.13,<3.14"
 
