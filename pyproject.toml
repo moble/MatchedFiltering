@@ -3,13 +3,11 @@
 # version.  This isn't actually a project, and we're not tracking the
 # project's version.
 [project]
-name = "plots.matched-filtering.org"
 version = "1.0.0"
 requires-python = ">=3.13,<3.14"
 
 # Ditto the fakery here.  This just lets marimo run
 [tool.setuptools.packages.find]
-include = ["plots"]
 exclude = ["document_root*"]
 
 [tool.hatch.envs.marimo]
@@ -18,12 +16,9 @@ extra-dependencies = [
   "uv",
 ]
 
-[tool.marimo.runtime]
-output_max_bytes = 8_500_000
-
 [tool.hatch.envs.marimo.scripts]
 config-check = "marimo config show"
-edit = "marimo edit --sandbox ./content/_matchedfiltering_mpl.py"
-run = "marimo run --sandbox ./content/_matchedfiltering_mpl.py"
-check = "uv run ./content/_matchedfiltering_mpl.py"  # Just to see if the script runs successfully
-convert = "marimo export html-wasm ./content/_matchedfiltering_mpl.py -f -o output/ --mode edit"
+edit = "marimo edit --sandbox ./content/matchedfiltering.py"
+run = "marimo run --sandbox ./content/matchedfiltering.py"
+check = "uv run ./content/matchedfiltering.py"  # Just to see if the script runs successfully
+convert = "marimo export html-wasm ./content/matchedfiltering.py -f -o output/ --mode edit"
