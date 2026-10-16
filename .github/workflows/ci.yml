@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - marimo
+    tags: ["*"]
+  pull_request:
+
+env:
+  PYTHONUNBUFFERED: "1"
+  FORCE_COLOR: "1"
+
+jobs:
+  export-marimo-and-publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+      contents: write
+    # Provide an output so the next job knows whether to release
+    outputs:
+      DEPLOY: ${{ steps.release_check.outputs.deploy }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python and install dependencies
+        run: |
+          uv python install  # Uses version pinned in project
+          uv venv .venv
+          uv pip install --upgrade pip hatch
+          uv pip install marimo
+          uv pip install plotly
+          uv pip install requests
+
+      - name: Install local package
+        run: uv pip install .
+
+      - name: Check marimo
+        if: "!contains(github.event.head_commit.message, '[skip marimo check]')"
+        run: .venv/bin/hatch run marimo:check ./content/_matchedfiltering_mpl.py 
+
+      - name: Show resolved marimo config
+        run: .venv/bin/hatch run marimo:config-check
+        
+      - name: Export notebook
+        run: .venv/bin/hatch run marimo:convert
+        env:
+          MARIMO_OUTPUT_MAX_BYTES: "8500000"
+        
+      - name: Upload document_root directory as artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: output
+
+      - name: Deploy to GitHub Pages
+        # Be sure to allow this under Settings > Pages > Build and deployment > Source > Github Actions
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages

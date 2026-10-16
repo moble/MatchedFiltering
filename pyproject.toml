@@ -1,0 +1,25 @@
+# NOTE: This section is almost useless; it's just here to make sure
+# that certain tools don't error out, and to specify the Python
+# version.  This isn't actually a project, and we're not tracking the
+# project's version.
+[project]
+name = "plots.matched-filtering.org"
+version = "1.0.0"
+requires-python = ">=3.13,<3.14"
+
+# Ditto the fakery here.  This just lets marimo run
+[tool.setuptools.packages.find]
+exclude = ["document_root*"]
+
+[tool.hatch.envs.marimo]
+extra-dependencies = [
+  "marimo",
+  "uv",
+]
+
+[tool.hatch.envs.marimo.scripts]
+config-check = "marimo config show"
+edit = "marimo edit --sandbox ./content/matchedfiltering.py"
+run = "marimo run --sandbox ./content/matchedfiltering.py"
+check = "uv run ./content/matchedfiltering.py"  # Just to see if the script runs successfully
+convert = "marimo export html-wasm ./content/matchedfiltering.py -f -o output/ --mode edit"

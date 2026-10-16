@@ -1,7 +1,7 @@
+import marimo as mo
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import ipywidgets as widgets
 
 max_safe_exponent = np.log(2)*(np.finfo(float).maxexp-1)
 
@@ -77,6 +77,37 @@ def filter_and_plot(
     
     plot_td_and_fd(t, hprime, frequencies, htilde*levels, h=h, htilde=htilde)
 
+def filter_and_plot_edit(
+    h, t, htilde, sampling_rate, sliders, notch_filters, equalizer_power, notch_filter_power,
+    frequencies, frequency_bin_upper_ends
+):
+    import marimo as mo
+    
+    # Get levels from sliders
+    levels = np.ones_like(frequencies)
+    if equalizer_power.value == "On":
+        slider_values = [s.value for s in sliders]
+        for i, f in enumerate(frequency_bin_upper_ends):
+            if i==0:
+                f_last = 0.0
+            levels[(frequencies >= f_last) & (frequencies < f)] = 10**(slider_values[i]/20.0)
+            f_last = f
+
+    # Get notch filters (if any)
+    if notch_filter_power.value == "On":
+        for _notch_filter in notch_filters:
+            f_begin, f_end, f_bool = [child.value for child in _notch_filter]
+            if (f_bool is True) and (f_begin<f_end):
+                levels[(frequencies >= f_begin) & (frequencies < f_end)] = 0.0
+
+    # Filter the data and transform back to the time domain
+    hprime = sampling_rate * np.fft.irfft(htilde*levels)
+
+    # Smooth the beginning and end, so there are no loud spikes as the audio turns on and off
+    hprime = fade(hprime, 0.05)
+
+    fig, audio = plot_td_and_fd_edit(t, hprime, frequencies, htilde*levels, h=h, htilde=htilde)
+    return fig, audio
 
 def plot_td_and_fd(t, hprime, f, htildeprime, h=None, htilde=None):
     from IPython.display import display, clear_output, Audio
@@ -110,6 +141,63 @@ def plot_td_and_fd(t, hprime, f, htildeprime, h=None, htilde=None):
     fig.tight_layout()
     display(Audio(data=hprime, rate=int(sampling_rate), autoplay=False))
     return fig, (ax1, ax2)
+
+def plot_td_and_fd_edit(t, hprime, f, htildeprime, h=None, htilde=None):
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+    import marimo as mo
+
+    print('Contrast: {0:.4f}'.format(np.max(np.abs(hprime)) / np.sqrt(np.mean(np.abs(hprime)**2))))
+
+    sampling_rate = 1.0/(t[1]-t[0])
+
+    #plt.close('all')
+    #fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("Time domain", "Frequency domain"))
+
+    #time domain plot
+    if h is not None:
+        fig.add_trace(go.Scatter(x=t, y=h, name='Raw data', line=dict(color='royalblue')), row=1, col=1)
+        fig.add_trace(go.Scatter(x=t, y=hprime, name='Filtered data', line=dict(color='orange')), row=1, col=1)
+        #ax1.legend(loc='lower left');
+    else:
+        fig.add_trace(go.Scatter(x=t, y=hprime, line=dict(color='royalblue')), row=1, col=1)
+    fig.update_xaxes(
+        title_text="Time (seconds)", 
+        range=[t[0], t[-1]], 
+        showgrid=True, row=1, col=1, automargin=True
+    )
+    fig.update_yaxes(
+        title_text="Detector strain $h$ (dimensionless)", 
+        range=[1.1*np.min(hprime), 1.1*np.max(hprime)], 
+        showgrid=True, row=1, col=1, automargin=True
+    )
+
+    #frequency domain plot
+    if htilde is not None:
+        fig.add_trace(go.Scatter(x=f, y=abs(htilde), name='Raw data', line=dict(color='royalblue')), row=1, col=2)
+        fig.add_trace(go.Scatter(x=f, y=abs(htildeprime), name='Filtered data', line=dict(color='orange')), row=1, col=2)
+    else:
+        fig.add_trace(go.Scatter(x=f, y=abs(htildeprime), line=dict(color='royalblue')), row=1, col=2)
+    fig.update_xaxes(
+        title_text='Frequency (Hz)', type="log",
+        range=[np.log10(1), np.log10(sampling_rate/2)],
+        showgrid=True, row=1, col=2, automargin=True
+    )
+    fig.update_yaxes(
+        title_text=r'Detector strain Fourier transform $\tilde{h}$ (seconds)',
+        type="log", showgrid=True, row=1, col=2, automargin=True
+    )
+    """
+    fig.update_layout(
+        height=700, 
+        width=1400  
+    )
+    """
+    fig.update_traces(line=dict(width=1.5))
+
+    audio = mo.audio(src=hprime, rate=int(sampling_rate))
+    return fig, audio
 
 
 def add_notch_filter(notch_filters, gap_filler):
